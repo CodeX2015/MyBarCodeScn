@@ -61,7 +61,23 @@ public class NetworkHelper {
         int responseCode = connection.getResponseCode();
 
         //query is your body
-        String query = "151512135";
+        String query = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<magazin>\n" +
+                " <seller login=\"__Said__\" stock=\"cash_lining\" date=\"2015-06-18 16:02:25\" checksum=\"f723d56ed587de28f869ebb73e817696188aa921\" act=\"4\">\n" +
+                "    </seller>\n" +
+                "    <discount \n" +
+                "  first_name=\"ТЕСТ\" \n" +
+                "  last_name=\"ТЕСТ\" \n" +
+                "        patronymic=\"ТЕСТ\"\n" +
+                "        phone=\"123456789\"\n" +
+                "        discount_code=\"987654321\"\n" +
+                "  email=\"someemail@mail.com\"\n" +
+                "  birthday=\"1980-01-01\"\n" +
+                "  wear_size=\"M\"\n" +
+                "  shoes_size=\"7\"\n" +
+                "  photo=\"фото клиента в формате hex\"/> \n" +
+                "</magazin>";
+
         connection.addRequestProperty("Content-Type", "application/" + "POST");
         if (query != null) {
             connection.setRequestProperty("Content-Length", Integer.toString(query.length()));
