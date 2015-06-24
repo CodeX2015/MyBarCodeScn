@@ -10,7 +10,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
@@ -100,7 +103,21 @@ public class NetworkHelper {
 
     private static BufferedReader openConnection(String url) throws Exception {
 
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         //https://www.hurl.it/
@@ -122,51 +139,86 @@ public class NetworkHelper {
                 "        photo=\"фото клиента в формате hex\"/> \n" +
                 "</magazin>";
 
+
+
         //connection.addRequestProperty("Content-Type", "application/" + "POST");
 
         // Modify connection settings
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+         conn.setReadTimeout(10000);
+         conn.setConnectTimeout(15000);
+         conn.setRequestMethod("POST");
+        //conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
 
         // Enable reading and writing through this connection
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
         //connection.setChunkedStreamingMode(0);
-        connection.setFixedLengthStreamingMode(2000);
-        connection.setConnectTimeout(5000);
-
+        //conn.setFixedLengthStreamingMode(2000);
+        //conn.setConnectTimeout(5000);
 
 
         if (query != null) {
-/**
-            byte[] message = query.getBytes("UTF8");
-            int lngth = message.length;
-            connection.setRequestProperty("Content-Length", (""+lngth));
-            connection.getOutputStream().write(message);
 
- */
+            //connection.setRequestProperty("Query", query);
+            //connection.setRequestProperty("Content-Length", Integer.toString(query.length()));
 
-            connection.setRequestProperty("Query", query);
-            connection.setRequestProperty("Content-Length", Integer.toString(query.length()));
-
-            // Connect to server
-            connection.connect();
-
-            connection.getOutputStream().write(query.getBytes("UTF8"));
+            //connection.getOutputStream().write(query.getBytes("UTF8"));
 
         }
 
 
 
-        int responseCode = connection.getResponseCode();
+
+        OutputStream os = conn.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(os, "UTF-8"));
+        writer.write(query);
+        writer.flush();
+        writer.close();
+        os.close();
+
+        conn.connect();
+
+
+
+        int responseCode = conn.getResponseCode();
         Log.d("Response Code ", String.valueOf(responseCode));
         if (responseCode != HttpsURLConnection.HTTP_OK) {
             throw new Exception(responseCode + " Bad Response Code");
         }
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String answer = Utils.convertStreamToString(in);
         return in;
     }
 
+/**
+    newVar(){
+
+        URL url = new URL("http://yoururl.com");
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setRequestMethod("POST");
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("firstParam", paramValue1));
+        params.add(new BasicNameValuePair("secondParam", paramValue2));
+        params.add(new BasicNameValuePair("thirdParam", paramValue3));
+
+        OutputStream os = conn.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(os, "UTF-8"));
+        writer.write(getQuery(params));
+        writer.flush();
+        writer.close();
+        os.close();
+
+        conn.connect();
+
+    }
+ */
 
 
     public interface LoadListener {
