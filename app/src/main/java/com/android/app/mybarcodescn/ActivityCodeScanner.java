@@ -10,10 +10,11 @@ import com.google.zxing.Result;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 /**
- * Created by Yakovlev on 17.06.2015.
+ * Created by Codex on 17.06.2015.
  */
-public class SimpleScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
+public class ActivityCodeScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
+    private Product product;
     private ZXingScannerView mScannerView;
     public String TAG = "BARCODEScn";
 
@@ -45,6 +46,7 @@ public class SimpleScannerActivity extends AppCompatActivity implements ZXingSca
         mScannerView.startCamera();
         Log.v(TAG, rawResult.getText()); // Prints scan results
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
+        product.setmBarCode(rawResult.getText());
     }
 
 }
