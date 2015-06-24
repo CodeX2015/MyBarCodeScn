@@ -5,8 +5,13 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,6 +26,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class NetworkHelper {
     private static ExecutorService mExecService = Executors.newCachedThreadPool();
     private static final String ALLOWED_URI_CHARS = "@#&=*+-_.,:!?()/~'%";
+    private static Gson mGson = new Gson();
 
     public static void getProductsDetailsByCode (){}
 
@@ -46,44 +52,113 @@ public class NetworkHelper {
                         throw new Exception(responseCode + " Bad Response Code");
                     }
                     Bitmap bmp = BitmapFactory.decodeStream(connection.getInputStream());
-                    listener.OnLoadComplete(bmp);
+                    listener.OnRequestComplete(bmp);
                 } catch (Exception ex) {
-                    listener.OnLoadError(ex);
+                    listener.OnRequestError(ex);
                     Log.d("Error Connection, url: " + url, ex.getMessage());
                 }
             }
         });
     }
 
-    private static BufferedReader openConnection(String url) throws Exception {
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-        connection.setConnectTimeout(5000);
-        int responseCode = connection.getResponseCode();
+    public static void getUserDetails(final LoadListener listener, final String username) {
+        mExecService.submit(new Runnable() {
 
+            @Override
+            public void run() {
+                String urljson = "https://joby.su/api/users/" + username + "/";
+                try {
+                    BufferedReader in = openConnection(urljson);
+                    JsonObject jRequest = mGson.fromJson(in.readLine(), JsonObject.class);
+                    in.close();
+                    //UserDetails userDetails = mGson.fromJson(jRequest,
+                    //        new TypeToken<UserDetails>() {}.getType());
+                    //listener.OnLoadComplete(userDetails);
+                } catch (Exception ex) {
+                    //listener.OnLoadError(ex);
+                    //log.error("Error Connection, url: " + urljson, ex);
+                }
+            }
+        });
+    }
+
+    public static void findProduct(final LoadListener listener, final String request) {
+        mExecService.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BufferedReader in = openConnection("http://vvmarket.cloudapp.net/pos_client/api/");
+                    JsonObject jRequest = mGson.fromJson(in.readLine(), JsonObject.class);
+                    in.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    private static BufferedReader openConnection(String url) throws Exception {
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+
+
+        //https://www.hurl.it/
         //query is your body
         String query = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<magazin>\n" +
-                " <seller login=\"__Said__\" stock=\"cash_lining\" date=\"2015-06-18 16:02:25\" checksum=\"f723d56ed587de28f869ebb73e817696188aa921\" act=\"4\">\n" +
+                "    <seller login=\"sm1kassa2\" stock=\"kassa2\" date=\"2013-07-03 15:02:25\" checksum=\"93ddde78c632af5b550f45dd1be4e1d35192\" act=\"4\">\n" +
                 "    </seller>\n" +
                 "    <discount \n" +
-                "  first_name=\"ТЕСТ\" \n" +
-                "  last_name=\"ТЕСТ\" \n" +
-                "        patronymic=\"ТЕСТ\"\n" +
-                "        phone=\"123456789\"\n" +
-                "        discount_code=\"987654321\"\n" +
-                "  email=\"someemail@mail.com\"\n" +
-                "  birthday=\"1980-01-01\"\n" +
-                "  wear_size=\"M\"\n" +
-                "  shoes_size=\"7\"\n" +
-                "  photo=\"фото клиента в формате hex\"/> \n" +
+                "        first_name=\"Имя\"    \n" +
+                "        last_name=\"Фамилия\" \n" +
+                "        patronymic=\"Отчество\"\n" +
+                "        phone=\"927777777\"\n" +
+                "        discount_code=\"10002355\"\n" +
+                "        email=\"someemail@mail.com\"\n" +
+                "        birthday=\"1980-01-01\"\n" +
+                "        wear_size=\"M\"\n" +
+                "        shoes_size=\"7\"\n" +
+                "        photo=\"фото клиента в формате hex\"/> \n" +
                 "</magazin>";
 
-        connection.addRequestProperty("Content-Type", "application/" + "POST");
+        //connection.addRequestProperty("Content-Type", "application/" + "POST");
+
+        // Modify connection settings
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+
+        // Enable reading and writing through this connection
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        //connection.setChunkedStreamingMode(0);
+        connection.setFixedLengthStreamingMode(2000);
+        connection.setConnectTimeout(5000);
+
+
+
         if (query != null) {
+/**
+            byte[] message = query.getBytes("UTF8");
+            int lngth = message.length;
+            connection.setRequestProperty("Content-Length", (""+lngth));
+            connection.getOutputStream().write(message);
+
+ */
+
+            connection.setRequestProperty("Query", query);
             connection.setRequestProperty("Content-Length", Integer.toString(query.length()));
+
+            // Connect to server
+            connection.connect();
+
             connection.getOutputStream().write(query.getBytes("UTF8"));
+
         }
 
+
+
+        int responseCode = connection.getResponseCode();
         Log.d("Response Code ", String.valueOf(responseCode));
         if (responseCode != HttpsURLConnection.HTTP_OK) {
             throw new Exception(responseCode + " Bad Response Code");
@@ -92,9 +167,11 @@ public class NetworkHelper {
         return in;
     }
 
+
+
     public interface LoadListener {
-        void OnLoadComplete(Object result);
-        void OnLoadError(Exception error);
+        void OnRequestComplete(Object result);
+        void OnRequestError(Exception error);
     }
 
 }

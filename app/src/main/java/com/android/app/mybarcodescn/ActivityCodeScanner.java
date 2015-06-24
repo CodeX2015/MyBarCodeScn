@@ -23,6 +23,8 @@ public class ActivityCodeScanner extends AppCompatActivity implements ZXingScann
         super.onCreate(state);
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
         setContentView(mScannerView);                // Set the scanner view as the content view
+        Utils.getData();
+        network();
     }
 
     @Override
@@ -47,6 +49,33 @@ public class ActivityCodeScanner extends AppCompatActivity implements ZXingScann
         Log.v(TAG, rawResult.getText()); // Prints scan results
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
         product.setmBarCode(rawResult.getText());
+
+
+
+
+
+    }
+
+    private void network() {
+        String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<magazin>\n" +
+                "\t<seller login=\"sm1kassa2\" stock=\"kassa2\" date=\"2013-07-03 15:02:25\" checksum=\"93ddde78c632af5b550f45dd1be4e1d35192\" act=\"17\">\n" +
+                "    </seller>\n" +
+                "    <product barcode=\"1234567891230\" />\n" +
+                "</magazin>";
+        NetworkHelper.findProduct(new NetworkHelper.LoadListener() {
+
+            @Override
+            public void OnRequestComplete(Object result) {
+
+            }
+
+            @Override
+            public void OnRequestError(Exception error) {
+
+            }
+
+        }, request);
     }
 
 }
