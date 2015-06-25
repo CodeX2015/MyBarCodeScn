@@ -14,6 +14,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by huligun on 24.06.2015.
@@ -42,7 +47,7 @@ public class Utils {
         convertXmltoJSON(xml);
     }
 
-    private static JSONObject convertXmltoJSON(String xml) {
+    public static JSONObject convertXmltoJSON(String xml) {
 
         JSONObject jsonObj = null;
         try {
@@ -55,7 +60,6 @@ public class Utils {
         Log.d("XML", xml);
 
         Log.d("JSON", jsonObj.toString());
-        convertJSONtoMagazin(jsonObj);
         return jsonObj;
     }
 
@@ -66,6 +70,14 @@ public class Utils {
         convertJsonToXml(jRequest.toString());
         Magazin magazin = mGson.fromJson(jRequest, new TypeToken<Magazin>() {
         }.getType());
+    }
+
+    public static Product convertJSONtoProduct(JSONObject jsonObj) {
+        String json = jsonObj.toString();
+        JsonObject jRequest = mGson.fromJson(json, JsonObject.class).getAsJsonObject("magazin");
+        Product product = mGson.fromJson(jRequest, new TypeToken<Product>() {
+        }.getType());
+        return product;
     }
 
     static void convertJsonToXml(String str){
@@ -106,6 +118,32 @@ public class Utils {
             */
         }
         return sb.toString();
+    }
+
+    private static String convertToHex(byte[] data) {
+        StringBuilder buf = new StringBuilder();
+        for (byte b : data) {
+            int halfbyte = (b >>> 4) & 0x0F;
+            int two_halfs = 0;
+            do {
+                buf.append((0 <= halfbyte) && (halfbyte <= 9) ? (char) ('0' + halfbyte) : (char) ('a' + (halfbyte - 10)));
+                halfbyte = b & 0x0F;
+            } while (two_halfs++ < 1);
+        }
+        return buf.toString();
+    }
+
+    public static String SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        md.update(text.getBytes("iso-8859-1"), 0, text.length());
+        byte[] sha1hash = md.digest();
+        return convertToHex(sha1hash);
+    }
+
+    public static String getCurrentTimeStamp() {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        Date now = new Date();
+        return sdfDate.format(now);
     }
 
 }

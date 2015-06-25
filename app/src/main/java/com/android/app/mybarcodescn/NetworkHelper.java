@@ -71,9 +71,9 @@ public class NetworkHelper {
             public void run() {
                 String urljson = "https://joby.su/api/users/" + username + "/";
                 try {
-                    BufferedReader in = openConnection(urljson);
-                    JsonObject jRequest = mGson.fromJson(in.readLine(), JsonObject.class);
-                    in.close();
+                    //BufferedReader in = openConnection(urljson);
+                    //JsonObject jRequest = mGson.fromJson(in.readLine(), JsonObject.class);
+                    //in.close();
                     //UserDetails userDetails = mGson.fromJson(jRequest,
                     //        new TypeToken<UserDetails>() {}.getType());
                     //listener.OnLoadComplete(userDetails);
@@ -85,101 +85,47 @@ public class NetworkHelper {
         });
     }
 
-    public static void findProduct(final LoadListener listener, final String request) {
+    public static void findProduct(final LoadListener listener, final String query) {
         mExecService.execute(new Runnable() {
             @Override
             public void run() {
+
                 try {
-                    BufferedReader in = openConnection("http://vvmarket.cloudapp.net/pos_client/api/");
-                    JsonObject jRequest = mGson.fromJson(in.readLine(), JsonObject.class);
+                    BufferedReader in = openConnection("http://vvmarket.cloudapp.net/pos_client/api/", query);
+                    String jRequest = Utils.convertStreamToString(in);
                     in.close();
+                    listener.OnRequestComplete(jRequest);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    listener.OnRequestError(e);
                 }
 
             }
         });
     }
 
-    private static BufferedReader openConnection(String url) throws Exception {
+    private static BufferedReader openConnection(String url, String query) throws Exception {
+            //https://www.hurl.it/
 
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //https://www.hurl.it/
-        //query is your body
-        String query = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<magazin>\n" +
-                "    <seller login=\"sm1kassa2\" stock=\"kassa2\" date=\"2013-07-03 15:02:25\" checksum=\"93ddde78c632af5b550f45dd1be4e1d35192\" act=\"4\">\n" +
-                "    </seller>\n" +
-                "    <discount \n" +
-                "        first_name=\"Имя\"    \n" +
-                "        last_name=\"Фамилия\" \n" +
-                "        patronymic=\"Отчество\"\n" +
-                "        phone=\"927777777\"\n" +
-                "        discount_code=\"10002355\"\n" +
-                "        email=\"someemail@mail.com\"\n" +
-                "        birthday=\"1980-01-01\"\n" +
-                "        wear_size=\"M\"\n" +
-                "        shoes_size=\"7\"\n" +
-                "        photo=\"фото клиента в формате hex\"/> \n" +
-                "</magazin>";
-
-
-
-        //connection.addRequestProperty("Content-Type", "application/" + "POST");
-
         // Modify connection settings
-         conn.setReadTimeout(10000);
-         conn.setConnectTimeout(15000);
-         conn.setRequestMethod("POST");
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setRequestMethod("POST");
         //conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
 
         // Enable reading and writing through this connection
         conn.setDoInput(true);
         conn.setDoOutput(true);
-        //connection.setChunkedStreamingMode(0);
-        //conn.setFixedLengthStreamingMode(2000);
-        //conn.setConnectTimeout(5000);
-
-
-        if (query != null) {
-
-            //connection.setRequestProperty("Query", query);
-            //connection.setRequestProperty("Content-Length", Integer.toString(query.length()));
-
-            //connection.getOutputStream().write(query.getBytes("UTF8"));
-
-        }
-
-
-
 
         OutputStream os = conn.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(os, "UTF-8"));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
         writer.write(query);
         writer.flush();
         writer.close();
         os.close();
-
         conn.connect();
-
-
 
         int responseCode = conn.getResponseCode();
         Log.d("Response Code ", String.valueOf(responseCode));
@@ -187,39 +133,8 @@ public class NetworkHelper {
             throw new Exception(responseCode + " Bad Response Code");
         }
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String answer = Utils.convertStreamToString(in);
         return in;
     }
-
-/**
-    newVar(){
-
-        URL url = new URL("http://yoururl.com");
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-        conn.setReadTimeout(10000);
-        conn.setConnectTimeout(15000);
-        conn.setRequestMethod("POST");
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("firstParam", paramValue1));
-        params.add(new BasicNameValuePair("secondParam", paramValue2));
-        params.add(new BasicNameValuePair("thirdParam", paramValue3));
-
-        OutputStream os = conn.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(os, "UTF-8"));
-        writer.write(getQuery(params));
-        writer.flush();
-        writer.close();
-        os.close();
-
-        conn.connect();
-
-    }
- */
-
 
     public interface LoadListener {
         void OnRequestComplete(Object result);
