@@ -5,15 +5,11 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -85,7 +81,6 @@ public class Utils {
         try {
             json = new JSONObject(str);
             String xml = XML.toString(json);
-            json =new JSONObject(str);
         } catch (JSONException e) {
             e.printStackTrace();
         }
