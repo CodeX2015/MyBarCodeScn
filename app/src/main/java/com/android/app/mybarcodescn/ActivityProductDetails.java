@@ -19,22 +19,22 @@ import java.util.ArrayList;
 /**
  * Created by CodeX on 24.06.2015.
  */
+
 public class ActivityProductDetails extends AppCompatActivity {
 
     private Button btnScan;
     private Button btnDetails;
-    private ListView mListView;
+
+    ProdDet prodDet = new ProdDet();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
 
-        mListView = (ListView) findViewById(R.id.lv_activity);
+        setContentView(R.layout.activity_product_details);
 
         btnScan = (Button) findViewById(R.id.btnScan);
         btnDetails = (Button) findViewById(R.id.btnDetails);
-
 
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,14 +47,26 @@ public class ActivityProductDetails extends AppCompatActivity {
             }
         });
 
-
-
         btnDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getData("6913657077940");
             }
         });
+
+
+        prodDet.tvName = (TextView) findViewById(R.id.tvName);
+        prodDet.tvSeason = (TextView) findViewById(R.id.tvSeason);
+        prodDet.tvBatch = (TextView) findViewById(R.id.tvBatch);
+        prodDet.tvBarCode = (TextView) findViewById(R.id.tvBarcode);
+        prodDet.tvPrice = (TextView) findViewById(R.id.tvPrice);
+        prodDet.tvTotalPrice = (TextView) findViewById(R.id.tvTotalPrice);
+        prodDet.tvDiscountSum = (TextView) findViewById(R.id.tvDiscountSum);
+        prodDet.tvDiscountPercent = (TextView) findViewById(R.id.tvDiscountPercent);
+        prodDet.mListView = (ListView) findViewById(R.id.lv_activity);
+
+
+
     }
 
     @Override
@@ -65,8 +77,6 @@ public class ActivityProductDetails extends AppCompatActivity {
     }
 
     private void getData(String barcode) {
-
-
         String date = Utils.getCurrentTimeStamp();
         String login = "__Said__";
         String password = "cash_lining";
@@ -99,8 +109,9 @@ public class ActivityProductDetails extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mListView.setAdapter(new MyAdapter(stocks));
+                        setProductDetails(stocks);
                         //Toast.makeText(ActivityProductDetails.this, (String) result, Toast.LENGTH_LONG).show();
+
                     }
                 });
             }
@@ -117,9 +128,31 @@ public class ActivityProductDetails extends AppCompatActivity {
         }, request);
     }
 
+    private void setProductDetails(ArrayList<Stock> stocks) {
+        prodDet.tvName.setText(prodDet.tvName.getText()
+                + ": " + stocks.get(0).getProduct().getName());
+        prodDet.tvSeason.setText(prodDet.tvSeason.getText()
+                + ": " + stocks.get(0).getProduct().getSeason());
+        prodDet.tvBatch.setText(prodDet.tvBatch.getText()
+                + ": " + stocks.get(0).getProduct().getBatch());
+        prodDet.tvBarCode.setText(prodDet.tvBarCode.getText()
+                + ": " + stocks.get(0).getProduct().getBarcode());
+        prodDet.tvPrice.setText(prodDet.tvPrice.getText()
+                + ": " + String.valueOf(stocks.get(0).getProduct().getPrice()));
+        prodDet.tvDiscountPercent.setText(prodDet.tvDiscountPercent.getText() +
+                ": " + String.valueOf(stocks.get(0).getProduct().getDiscount_percent()));
+        prodDet.tvDiscountSum.setText(prodDet.tvDiscountSum.getText() +
+                ": " + String.valueOf(stocks.get(0).getProduct().getEconom_sum()));
+        prodDet.tvTotalPrice.setText(prodDet.tvTotalPrice.getText() +
+                ": " + String.valueOf(stocks.get(0).getProduct().getTotal_price()));
+
+        prodDet.mListView.setAdapter(new MyAdapter(stocks));
+    }
+
     private class MyAdapter extends BaseAdapter {
 
         ArrayList<Stock> stocks;
+        //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
 
         MyAdapter(ArrayList<Stock> stocks) {
             this.stocks = stocks;
@@ -145,60 +178,41 @@ public class ActivityProductDetails extends AppCompatActivity {
             MyRow myRow;
             if (convertView == null) {
                 myRow = new MyRow();
-                convertView = ActivityProductDetails.this.getLayoutInflater().inflate(R.layout.row_product_details, parent, false);
-                myRow.tvName = (TextView) convertView.findViewById(R.id.tvName);
-                myRow.tvSeason = (TextView) convertView.findViewById(R.id.tvSeason);
-                myRow.tvBatch = (TextView) convertView.findViewById(R.id.tvBatch);
+                convertView = ActivityProductDetails.this.getLayoutInflater().inflate(R.layout.row_list_size, parent, false);
                 myRow.tvSize = (TextView) convertView.findViewById(R.id.tvSize);
-                myRow.tvBarCode = (TextView) convertView.findViewById(R.id.tvBarcode);
-                myRow.tvPrice = (TextView) convertView.findViewById(R.id.tvPrice);
-                myRow.tvDiscountPercent = (TextView) convertView.findViewById(R.id.tvDiscountPercent);
-                myRow.tvEconomSum = (TextView) convertView.findViewById(R.id.tvEconomSum);
-                myRow.tvTotalPrice = (TextView) convertView.findViewById(R.id.tvTotalPrice);
+                myRow.tvStock = (TextView) convertView.findViewById(R.id.tvStock);
                 convertView.setTag(myRow);
             } else {
                 myRow = (MyRow) convertView.getTag();
             }
 
 
-            Log.d("MYDEBUG", "ITEM -" + getItem(position).getProduct().getName());
-            Log.d("MYDEBUG","TEXTVIEW -" + myRow.tvName.getText());
+            Log.d("MYDEBUG", "ITEM -" + getItem(position).getProduct().getName()+" position - " + position);
+            Log.d("MYDEBUG", "ITEM -" + getItem(position).getName());
+            //Log.d("MYDEBUG","TEXTVIEW -" + myRow.tvName.getText());
 
 
-            myRow.tvName.setText(myRow.tvName.getText()
-                    + ": " + getItem(position).getProduct().getName());
+            myRow.tvSize.setText("Size: " + String.valueOf(getItem(position).getProduct().getSize()));
+            myRow.tvStock.setText("Stock: " + String.valueOf(getItem(position).getName()));
 
-
-
-            myRow.tvSeason.setText(myRow.tvSeason.getText()
-                    + ": " + getItem(position).getProduct().getSeason());
-            myRow.tvBatch.setText(myRow.tvBatch.getText()
-                    + ": " + getItem(position).getProduct().getBatch());
-            myRow. tvSize.setText(myRow.tvSize.getText()
-                    + ": " + String.valueOf(getItem(position).getProduct().getSize()));
-            myRow.tvBarCode.setText(myRow.tvBarCode.getText()
-                    + ": " + getItem(position).getProduct().getBarcode());
-            myRow.tvPrice.setText(myRow.tvPrice.getText()
-                    + ": " + String.valueOf(getItem(position).getProduct().getPrice()));
-            myRow.tvDiscountPercent.setText(myRow.tvDiscountPercent.getText() +
-                    ": " + String.valueOf(getItem(position).getProduct().getDiscount_percent()));
-            myRow.tvEconomSum.setText(myRow.tvEconomSum.getText() +
-                    ": " + String.valueOf(getItem(position).getProduct().getEconom_sum()));
-            myRow.tvTotalPrice.setText(myRow.tvTotalPrice.getText() +
-                    ": " + String.valueOf(getItem(position).getProduct().getTotal_price()));
             return convertView;
         }
     }
 
     private class MyRow {
-        TextView tvName;
-        TextView tvSeason;
-        TextView tvBatch;
-        TextView tvSize;
+        private TextView tvSize;
+        private TextView tvStock;
+    }
+
+    private class ProdDet {
+        private TextView tvName;
+        private TextView tvSeason;
+        private TextView tvBatch;
         private TextView tvBarCode;
         private TextView tvPrice;
         private TextView tvDiscountPercent;
-        private TextView tvEconomSum;
+        private TextView tvDiscountSum;
         private TextView tvTotalPrice;
+        private ListView mListView;
     }
 }
