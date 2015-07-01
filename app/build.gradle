@@ -25,4 +25,5 @@ dependencies {
     compile 'me.dm7.barcodescanner:zxing:1.7.2'
     compile files('libs/java-json.jar')
     compile 'com.google.code.gson:gson:2.3.1'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
 }
