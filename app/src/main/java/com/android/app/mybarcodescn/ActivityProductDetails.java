@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +28,7 @@ public class ActivityProductDetails extends AppCompatActivity {
 
     private Button btnScan;
     private Button btnDetails;
+
 
     ProdDet prodDet = new ProdDet();
 
@@ -85,9 +83,6 @@ public class ActivityProductDetails extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String sendStock = ((Stock) parent.getAdapter().getItem(position)).getName();
-
-
-
 
                 Toast.makeText(ActivityProductDetails.this, sendStock, Toast.LENGTH_LONG).show();
             }
@@ -176,8 +171,10 @@ public class ActivityProductDetails extends AppCompatActivity {
 
         //prodDet.mListView.setAdapter(new MyAdapter(stocks));
         //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
-        Utils.setListViewHeightBasedOnChildren(prodDet.mListView);
+        Utils.setMyList(prodDet.mListView);
     }
+
+
 
     private class MyAdapter extends BaseAdapter {
 
@@ -208,7 +205,7 @@ public class ActivityProductDetails extends AppCompatActivity {
             MyRow myRow;
             if (convertView == null) {
                 myRow = new MyRow();
-                convertView = ActivityProductDetails.this.getLayoutInflater().inflate(R.layout.row_list_size, parent, false);
+                convertView = ActivityProductDetails.this.getLayoutInflater().inflate(R.layout.row_list_item, parent, false);
                 myRow.tvSize = (TextView) convertView.findViewById(R.id.tvSize);
                 myRow.tvStock = (TextView) convertView.findViewById(R.id.tvStock);
                 convertView.setTag(myRow);

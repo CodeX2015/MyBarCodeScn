@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.android.app.mybarcodescn.R;
 import com.android.app.mybarcodescn.Stock;
+import com.android.app.mybarcodescn.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+
 
 /**
  * Created by CodeX on 02.07.2015.
@@ -38,6 +40,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         StockComparator stockComparator = new StockComparator();
         Collections.sort(stocks, stockComparator);
         mSections = findSections();
+        Utils.setmHeadersCount(mSections.size());
         mSectionIndices = getSectionIndices();
         mSectionNames = getSectionNames();
     }
@@ -111,7 +114,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         MyRow myRow;
         if (convertView == null) {
             myRow = new MyRow();
-            convertView = mInflater.inflate(R.layout.row_list_size, parent, false);
+            convertView = mInflater.inflate(R.layout.row_list_item, parent, false);
             myRow.tvSize = (TextView) convertView.findViewById(R.id.tvSize);
             myRow.tvStock = (TextView) convertView.findViewById(R.id.tvStock);
             convertView.setTag(myRow);
@@ -135,7 +138,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
 
         if (convertView == null) {
             holder = new HeaderViewHolder();
-            convertView = mInflater.inflate(R.layout.list_header, parent, false);
+            convertView = mInflater.inflate(R.layout.row_list_header, parent, false);
             holder.text = (TextView) convertView.findViewById(R.id.list_header_title);
             convertView.setTag(holder);
         } else {

@@ -4,8 +4,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 
+import com.android.app.mybarcodescn.adapters.StickyListHeaderAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -22,12 +22,22 @@ import java.util.Date;
 
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
+
 /**
  * Created by huligun on 24.06.2015.
  */
 public class Utils {
 
     private static Gson mGson = new Gson();
+    private static int mHeadersCount;
+
+    public int getmHeadersCount() {
+        return mHeadersCount;
+    }
+
+    public static void setmHeadersCount(int count) {
+        mHeadersCount = count;
+    }
 
     public static void getData() {
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
@@ -167,6 +177,30 @@ public class Utils {
             view.measure(View.MeasureSpec.makeMeasureSpec(desiredWidth, View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
             totalHeight += view.getMeasuredHeight();
         }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
+
+    public static void setMyList(ExpandableStickyListHeadersListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        //int jjjj = listAdapter.ge
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+
+        view = listAdapter.getView(0, view, listView);
+        view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+
+        view.measure(View.MeasureSpec.makeMeasureSpec(desiredWidth, View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        totalHeight = (view.getMeasuredHeight()*(listAdapter.getCount() + mHeadersCount)+view.getMeasuredHeight());
+
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
