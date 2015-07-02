@@ -177,60 +177,6 @@ public class ActivityProductDetails extends AppCompatActivity {
         Utils.setMyList(prodDet.mListView);
     }
 
-
-
-    private class MyAdapter extends BaseAdapter {
-
-        ArrayList<Stock> stocks;
-
-
-        MyAdapter(ArrayList<Stock> stocks) {
-            this.stocks = stocks;
-        }
-
-        @Override
-        public int getCount() {
-            return stocks.size();
-        }
-
-        @Override
-        public Stock getItem(int position) {
-            return stocks.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            MyRow myRow;
-            if (convertView == null) {
-                myRow = new MyRow();
-                convertView = ActivityProductDetails.this.getLayoutInflater().inflate(R.layout.row_list_item, parent, false);
-                myRow.tvSize = (TextView) convertView.findViewById(R.id.tvSize);
-                myRow.tvStock = (TextView) convertView.findViewById(R.id.tvStock);
-                convertView.setTag(myRow);
-            } else {
-                myRow = (MyRow) convertView.getTag();
-            }
-
-            Log.d("MYDEBUG", "ITEM -" + getItem(position).getProduct().getName()+" position - " + position);
-            Log.d("MYDEBUG", "ITEM -" + getItem(position).getName());
-
-            myRow.tvSize.setText("Size: " + String.valueOf(getItem(position).getProduct().getSize()));
-            myRow.tvStock.setText("Stock: " + String.valueOf(getItem(position).getName()));
-
-            return convertView;
-        }
-    }
-
-    private class MyRow {
-        private TextView tvSize;
-        private TextView tvStock;
-    }
-
     private class ProdDet {
         private TextView tvName;
         private TextView tvSeason;
