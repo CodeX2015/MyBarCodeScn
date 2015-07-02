@@ -1,5 +1,7 @@
 package com.android.app.mybarcodescn;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 /**
@@ -12,9 +14,27 @@ public class ProductDetails implements Serializable {
     String name;
     double econom_sum;
     String barcode;
+    double count;
+    String image;
     double total_price;
     double size;
     int discount_percent;
+
+    public double getCount() {
+        return count;
+    }
+
+    public void setCount(double count) {
+        this.count = count;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public int getDiscount_percent() {
         return discount_percent;

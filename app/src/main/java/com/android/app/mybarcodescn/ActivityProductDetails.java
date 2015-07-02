@@ -152,29 +152,30 @@ public class ActivityProductDetails extends AppCompatActivity {
     }
 
     private void setProductDetails(ArrayList<Stock> stocks) {
-        prodDet.tvName.setText(prodDet.tvName.getText()
-                + ": " + stocks.get(0).getProduct().getName());
-        prodDet.tvSeason.setText(prodDet.tvSeason.getText()
-                + ": " + stocks.get(0).getProduct().getSeason());
-        prodDet.tvBatch.setText(prodDet.tvBatch.getText()
-                + ": " + stocks.get(0).getProduct().getBatch());
-        prodDet.tvBarCode.setText(prodDet.tvBarCode.getText()
-                + ": " + stocks.get(0).getProduct().getBarcode());
-        prodDet.tvPrice.setText(prodDet.tvPrice.getText()
-                + ": " + String.valueOf(stocks.get(0).getProduct().getPrice()));
-        prodDet.tvDiscountPercent.setText(prodDet.tvDiscountPercent.getText() +
-                ": " + String.valueOf(stocks.get(0).getProduct().getDiscount_percent()));
-        prodDet.tvDiscountSum.setText(prodDet.tvDiscountSum.getText() +
-                ": " + String.valueOf(stocks.get(0).getProduct().getEconom_sum()));
-        prodDet.tvTotalPrice.setText(prodDet.tvTotalPrice.getText() +
-                ": " + String.valueOf(stocks.get(0).getProduct().getTotal_price()));
+        if (stocks != null) {
+            prodDet.tvName.setText(prodDet.tvName.getText()
+                    + ": " + stocks.get(0).getProduct().getName());
+            prodDet.tvSeason.setText(prodDet.tvSeason.getText()
+                    + ": " + stocks.get(0).getProduct().getSeason());
+            prodDet.tvBatch.setText(prodDet.tvBatch.getText()
+                    + ": " + stocks.get(0).getProduct().getBatch());
+            prodDet.tvBarCode.setText(prodDet.tvBarCode.getText()
+                    + ": " + stocks.get(0).getProduct().getBarcode());
+            prodDet.tvPrice.setText(prodDet.tvPrice.getText()
+                    + ": " + String.valueOf(stocks.get(0).getProduct().getPrice()));
+            prodDet.tvDiscountPercent.setText(prodDet.tvDiscountPercent.getText() +
+                    ": " + String.valueOf(stocks.get(0).getProduct().getDiscount_percent()));
+            prodDet.tvDiscountSum.setText(prodDet.tvDiscountSum.getText() +
+                    ": " + String.valueOf(stocks.get(0).getProduct().getEconom_sum()));
+            prodDet.tvTotalPrice.setText(prodDet.tvTotalPrice.getText() +
+                    ": " + String.valueOf(stocks.get(0).getProduct().getTotal_price()));
 
+            prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, stocks));
 
-        prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, stocks));
-
-        //prodDet.mListView.setAdapter(new MyAdapter(stocks));
-        //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
-        Utils.setMyList(prodDet.mListView);
+            //prodDet.mListView.setAdapter(new MyAdapter(stocks));
+            //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
+            Utils.setMyList(prodDet.mListView);
+        }
     }
 
     private class ProdDet {
