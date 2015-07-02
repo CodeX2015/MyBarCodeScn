@@ -24,6 +24,9 @@ import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
  * Created by CodeX on 24.06.2015.
  */
 
+
+//Todo create button and method for scan discont card from product details activity
+
 public class ActivityProductDetails extends AppCompatActivity {
 
     private Button btnScan;
