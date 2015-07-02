@@ -121,7 +121,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         } else {
             myRow = (MyRow) convertView.getTag();
         }
-        myRow.tvSize.setText("Size: " + String.valueOf(getItem(position).getProduct().getSize()));
+        myRow.tvSize.setText("Size: " + String.valueOf(getItem(position).getProduct().get(0).getSize()));
         myRow.tvStock.setText("Stock: " + String.valueOf(getItem(position).getName()));
 
         return convertView;

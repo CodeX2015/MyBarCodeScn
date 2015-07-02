@@ -15,6 +15,7 @@ import org.json.XML;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -59,8 +60,11 @@ public class Utils {
         convertXmltoJSON(xml);
     }
 
-    public static JSONObject convertXmltoJSON(String xml) {
 
+
+
+
+    public static JSONObject convertXmltoJSON(String xml) {
         JSONObject jsonObj = null;
         try {
             jsonObj = XML.toJSONObject(xml);
@@ -119,16 +123,9 @@ public class Utils {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            /**
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            */
         }
-        return sb.toString();
+        String nn = sb.toString().replace("</stock>", "<product season=\"\"/></stock>");
+        return nn;
     }
 
     private static String convertToHex(byte[] data) {

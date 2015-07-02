@@ -34,24 +34,24 @@ public class NetworkHelper {
     public static void getProductsDetailsByCode (){}
 
 
-    public static void getImageFromUrl(final LoadListener listener, final String get_avatar_api) {
+    public static void getImageFromUrl(final LoadListener listener, final String image) {
         mExecService.execute(new Runnable() {
             @Override
             public void run() {
                 URL url = null;
                 try {
                     String temp;
-                    if (get_avatar_api.substring(0, 6).equalsIgnoreCase("https:")) {
-                        temp = get_avatar_api;
+                    if (image.substring(0, 5).equalsIgnoreCase("http:")) {
+                        temp = image;
                     } else {
-                        temp = "https://joby.su" + get_avatar_api;
+                        temp = "http://vvmarket.cloudapp.net/" + image;
                     }
                     String urlEncoded = Uri.encode(temp, ALLOWED_URI_CHARS);
                     url = new URL(urlEncoded);
-                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     int responseCode = connection.getResponseCode();
                     Log.d("Response Code ", String.valueOf(responseCode));
-                    if (responseCode != HttpsURLConnection.HTTP_OK) {
+                    if (responseCode != HttpURLConnection.HTTP_OK) {
                         throw new Exception(responseCode + " Bad Response Code");
                     }
                     Bitmap bmp = BitmapFactory.decodeStream(connection.getInputStream());

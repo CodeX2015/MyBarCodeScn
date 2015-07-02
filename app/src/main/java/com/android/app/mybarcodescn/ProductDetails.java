@@ -97,7 +97,7 @@ public class ProductDetails implements Serializable {
     }
 
     public void setPrice(long price) {
-
+        this.price = price;
     }
 
     public String getSeason() {

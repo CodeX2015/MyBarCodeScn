@@ -154,21 +154,21 @@ public class ActivityProductDetails extends AppCompatActivity {
     private void setProductDetails(ArrayList<Stock> stocks) {
         if (stocks != null) {
             prodDet.tvName.setText(prodDet.tvName.getText()
-                    + ": " + stocks.get(0).getProduct().getName());
+                    + ": " + stocks.get(0).getProduct().get(0).getName());
             prodDet.tvSeason.setText(prodDet.tvSeason.getText()
-                    + ": " + stocks.get(0).getProduct().getSeason());
+                    + ": " + stocks.get(0).getProduct().get(0).getSeason());
             prodDet.tvBatch.setText(prodDet.tvBatch.getText()
-                    + ": " + stocks.get(0).getProduct().getBatch());
+                    + ": " + stocks.get(0).getProduct().get(0).getBatch());
             prodDet.tvBarCode.setText(prodDet.tvBarCode.getText()
-                    + ": " + stocks.get(0).getProduct().getBarcode());
+                    + ": " + stocks.get(0).getProduct().get(0).getBarcode());
             prodDet.tvPrice.setText(prodDet.tvPrice.getText()
-                    + ": " + String.valueOf(stocks.get(0).getProduct().getPrice()));
+                    + ": " + String.valueOf(stocks.get(0).getProduct().get(0).getPrice()));
             prodDet.tvDiscountPercent.setText(prodDet.tvDiscountPercent.getText() +
-                    ": " + String.valueOf(stocks.get(0).getProduct().getDiscount_percent()));
+                    ": " + String.valueOf(stocks.get(0).getProduct().get(0).getDiscount_percent()));
             prodDet.tvDiscountSum.setText(prodDet.tvDiscountSum.getText() +
-                    ": " + String.valueOf(stocks.get(0).getProduct().getEconom_sum()));
+                    ": " + String.valueOf(stocks.get(0).getProduct().get(0).getEconom_sum()));
             prodDet.tvTotalPrice.setText(prodDet.tvTotalPrice.getText() +
-                    ": " + String.valueOf(stocks.get(0).getProduct().getTotal_price()));
+                    ": " + String.valueOf(stocks.get(0).getProduct().get(0).getTotal_price()));
 
             prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, stocks));
 

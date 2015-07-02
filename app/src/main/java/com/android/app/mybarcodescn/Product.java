@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Product implements Serializable{
     int status;
     String description;
-    ArrayList<Stock>  stock = new ArrayList<Stock>();
+    ArrayList<Stock> stock = new ArrayList<Stock>();
 
     public int getStatus() {
         return status;

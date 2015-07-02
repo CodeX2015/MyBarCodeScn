@@ -1,13 +1,15 @@
 package com.android.app.mybarcodescn;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Yakovlev on 25.06.2015.
  */
 public class Stock implements Serializable{
     String name;
-    ProductDetails product;
+    String code;
+    ArrayList<ProductDetails> product = new ArrayList<ProductDetails>();
 
     public String getName() {
         return name;
@@ -17,11 +19,19 @@ public class Stock implements Serializable{
         this.name = name;
     }
 
-    public ProductDetails getProduct() {
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public ArrayList<ProductDetails> getProduct() {
         return product;
     }
 
-    public void setProduct(ProductDetails product) {
+    public void setProduct(ArrayList<ProductDetails> product) {
         this.product = product;
     }
 }
