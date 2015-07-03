@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.android.app.mybarcodescn.ProductDetails;
 import com.android.app.mybarcodescn.R;
 import com.android.app.mybarcodescn.Stock;
 import com.android.app.mybarcodescn.Utils;
@@ -16,7 +17,9 @@ import com.android.app.mybarcodescn.Utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -27,12 +30,18 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 public class StickyListHeaderAdapter extends BaseAdapter implements
         StickyListHeadersAdapter, SectionIndexer {
-
+    private Set<Stock> mStocksSet;
     private ArrayList<Stock> mStocks;
     private int[] mSectionIndices;
     private String[] mSectionNames;
     private LayoutInflater mInflater;
     LinkedHashMap<String, String> mSections;
+
+
+    public Set<Stock> convertArrayList2HashSet(ArrayList<Stock> stocks) {
+        Set<Stock> setOfStocks = new HashSet<Stock>(stocks);
+        return setOfStocks;
+    }
 
     public StickyListHeaderAdapter(Context context, ArrayList<Stock> stocks) {
         mInflater = LayoutInflater.from(context);
@@ -43,6 +52,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         Utils.setmHeadersCount(mSections.size());
         mSectionIndices = getSectionIndices();
         mSectionNames = getSectionNames();
+        mStocksSet = convertArrayList2HashSet(stocks);
     }
 
     private int[] getSectionIndices() {
@@ -96,7 +106,6 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
     @Override
     public int getCount() {
         return mStocks.size();
-
     }
 
     @Override
@@ -111,6 +120,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        //Todo adapter parameter HashSet() stocks
         MyRow myRow;
         if (convertView == null) {
             myRow = new MyRow();
