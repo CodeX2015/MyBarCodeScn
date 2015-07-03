@@ -15,7 +15,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  */
 public class ActivityCodeScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
-    private Product Magazin;
+    private Product product;
     private ZXingScannerView mScannerView;
     public String TAG = "BARCODEScn";
 
@@ -25,7 +25,7 @@ public class ActivityCodeScanner extends AppCompatActivity implements ZXingScann
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
         setContentView(mScannerView);                // Set the scanner view as the content view
         //Utils.getData();
-        network("6913657077940");
+        //network("6913657077940");
     }
 
     @Override

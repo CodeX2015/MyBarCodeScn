@@ -3,6 +3,7 @@ package com.android.app.mybarcodescn;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -26,8 +27,11 @@ import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
 public class ActivityProductDetails extends AppCompatActivity {
 
-    private Button btnScan;
+    private Button btnScanProduct;
+    private Button btnScanCard;
     private Button btnDetails;
+    private String mCardCode = "000000000000";
+    private String mBarCode = "6913657077940";
 
 
     ProdDet prodDet = new ProdDet();
@@ -38,24 +42,31 @@ public class ActivityProductDetails extends AppCompatActivity {
 
         setContentView(R.layout.activity_product_details);
 
-        btnScan = (Button) findViewById(R.id.btnScan);
+        btnScanProduct = (Button) findViewById(R.id.btnScanProduct);
+        btnScanCard = (Button) findViewById(R.id.btnScanCard);
+
         btnDetails = (Button) findViewById(R.id.btnDetails);
 
-        btnScan.setOnClickListener(new View.OnClickListener() {
+        btnScanProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //startActivity(new Intent(ActivityProductDetails.this, ActivityCodeScanner.class));
-                //finish();
-
                 Intent intent = new Intent(ActivityProductDetails.this, ActivityCodeScanner.class);
                 startActivityForResult(intent, 1);
+            }
+        });
+
+        btnScanCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ActivityProductDetails.this, ActivityCardScanner.class);
+                startActivityForResult(intent, 2);
             }
         });
 
         btnDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getData("6913657077940");
+                getData(mBarCode, mCardCode);
             }
         });
 
@@ -83,7 +94,6 @@ public class ActivityProductDetails extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String sendStock = ((Stock) parent.getAdapter().getItem(position)).getName();
-
                 Toast.makeText(ActivityProductDetails.this, sendStock, Toast.LENGTH_LONG).show();
             }
         });
@@ -91,12 +101,26 @@ public class ActivityProductDetails extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null) {return;}
-        //getData(data.getStringExtra("barcode"));
-        Toast.makeText(this, "get data by: " + data.getStringExtra("barcode"), Toast.LENGTH_LONG).show();
+        if (data == null || resultCode != RESULT_OK) {return;}
+        switch (requestCode) {
+            case 1:
+                Toast.makeText(this, "barcode: " + data.getStringExtra("barcode"), Toast.LENGTH_LONG).show();
+                Log.d("ActivityResult", data.getStringExtra("barcode"));
+                setmBarCode(data.getStringExtra("barcode"));
+                setmBarCode(data.getStringExtra("barcode"));
+                getData(mBarCode, mCardCode);
+                break;
+            case 2:
+                Toast.makeText(this, "cardcode: " + data.getStringExtra("cardcode"), Toast.LENGTH_LONG).show();
+                Log.d("ActivityResult", data.getStringExtra("cardcode"));
+                setmCardCode(data.getStringExtra("cardcode"));
+                getData(mBarCode, mCardCode);
+                break;
+        }
     }
 
-    private void getData(String barcode) {
+    private void getData(String barcode, String cardcode) {
+
         String date = Utils.getCurrentTimeStamp();
         String login = "__Said__";
         String password = "cash_lining";
@@ -108,17 +132,24 @@ public class ActivityProductDetails extends AppCompatActivity {
         }
 
         String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<Product>\n" + "\t<seller login=\"" +
+                "<magazin>\n" +
+                "\t<seller login=\"" +
                 login +
                 "\" stock=\"" +
                 password +
                 "\" date=\"" +
                 date +
                 "\" checksum=\"" +
-                checksum + "\" act=\"17\">\n" +
-                "    </seller>\n" + "    <product barcode=\"" +
+                checksum +
+                "\" act=\"17\">\n" +
+                "    </seller>\n" +
+                "    <product barcode=\"" +
                 barcode +
-                "\" />\n" + "</Product>";
+                "\" />\n" +
+                "    <client barcode=\"" +
+                cardcode +
+                "\" />\n" +
+                "</magazin>";
 
         NetworkHelper.findProduct(new NetworkHelper.LoadListener() {
 
@@ -151,22 +182,14 @@ public class ActivityProductDetails extends AppCompatActivity {
 
     private void setProductDetails(ArrayList<Stock> stocks) {
         if (stocks != null) {
-            prodDet.tvName.setText(prodDet.tvName.getText()
-                    + ": " + stocks.get(0).getProduct().get(0).getName());
-            prodDet.tvSeason.setText(prodDet.tvSeason.getText()
-                    + ": " + stocks.get(0).getProduct().get(0).getSeason());
-            prodDet.tvBatch.setText(prodDet.tvBatch.getText()
-                    + ": " + stocks.get(0).getProduct().get(0).getBatch());
-            prodDet.tvBarCode.setText(prodDet.tvBarCode.getText()
-                    + ": " + stocks.get(0).getProduct().get(0).getBarcode());
-            prodDet.tvPrice.setText(prodDet.tvPrice.getText()
-                    + ": " + String.valueOf(stocks.get(0).getProduct().get(0).getPrice()));
-            prodDet.tvDiscountPercent.setText(prodDet.tvDiscountPercent.getText() +
-                    ": " + String.valueOf(stocks.get(0).getProduct().get(0).getDiscount_percent()));
-            prodDet.tvDiscountSum.setText(prodDet.tvDiscountSum.getText() +
-                    ": " + String.valueOf(stocks.get(0).getProduct().get(0).getEconom_sum()));
-            prodDet.tvTotalPrice.setText(prodDet.tvTotalPrice.getText() +
-                    ": " + String.valueOf(stocks.get(0).getProduct().get(0).getTotal_price()));
+            prodDet.tvName.setText("Product name: " + stocks.get(0).getProduct().get(0).getName());
+            prodDet.tvSeason.setText("Season: " + stocks.get(0).getProduct().get(0).getSeason());
+            prodDet.tvBatch.setText("Batch: " + stocks.get(0).getProduct().get(0).getBatch());
+            prodDet.tvBarCode.setText("BarCode: " + stocks.get(0).getProduct().get(0).getBarcode());
+            prodDet.tvPrice.setText("Price: " + String.valueOf(stocks.get(0).getProduct().get(0).getPrice()));
+            prodDet.tvDiscountPercent.setText("DiscountPercent: " + String.valueOf(stocks.get(0).getProduct().get(0).getDiscount_percent()));
+            prodDet.tvDiscountSum.setText("DiscountSum: " + String.valueOf(stocks.get(0).getProduct().get(0).getEconom_sum()));
+            prodDet.tvTotalPrice.setText("TotalPrice: " + String.valueOf(stocks.get(0).getProduct().get(0).getTotal_price()));
 
             prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, stocks));
 
@@ -174,6 +197,28 @@ public class ActivityProductDetails extends AppCompatActivity {
             //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
             Utils.setMyList(prodDet.mListView);
         }
+    }
+
+    public String getmCardCode() {
+        if (mCardCode == null) {
+            return "";
+        }
+        return mCardCode;
+    }
+
+    public void setmCardCode(String mCardCode) {
+        this.mCardCode = mCardCode;
+    }
+
+    public String getmBarCode() {
+        if (mBarCode == null) {
+            return "";
+        }
+        return mBarCode;
+    }
+
+    public void setmBarCode(String mBarCode) {
+        this.mBarCode = mBarCode;
     }
 
     private class ProdDet {
@@ -186,5 +231,58 @@ public class ActivityProductDetails extends AppCompatActivity {
         private TextView tvDiscountSum;
         private TextView tvTotalPrice;
         private ExpandableStickyListHeadersListView mListView;
+    }
+
+    private void network(String barcode) {
+        String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<Product>\n" +
+                "\t<seller login=\"__Said__\" stock=\"cash_lining\" date=\"2015-06-18 16:02:25\" checksum=\"f723d56ed587de28f869ebb73e817696188aa921\" act=\"17\">\n" +
+                "    </seller>\n" +
+                "    <Product barcode=\"" +
+                barcode +
+                "\" />\n" +
+                "</Product>";
+
+        //query is your body
+        String query = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<Product>\n" +
+                " <seller login=\"__Said__\" stock=\"cash_lining\" date=\"2015-06-18 16:02:25\" checksum=\"f723d56ed587de28f869ebb73e817696188aa921\" act=\"4\">\n" +
+                "    </seller>\n" +
+                "    <discount \n" +
+                "  first_name=\"ТЕСТ\" \n" +
+                "  last_name=\"ТЕСТ\" \n" +
+                "        patronymic=\"ТЕСТ\"\n" +
+                "        phone=\"123456789\"\n" +
+                "        discount_code=\"987654321\"\n" +
+                "  email=\"someemail@mail.com\"\n" +
+                "  birthday=\"1980-01-01\"\n" +
+                "  wear_size=\"M\"\n" +
+                "  shoes_size=\"7\"\n" +
+                "  photo=\"фото клиента в формате hex\"/>\n" +
+                "</Product>";
+
+        NetworkHelper.findProduct(new NetworkHelper.LoadListener() {
+
+            @Override
+            public void OnRequestComplete(final Object result) {
+                Utils.convertXmltoJSON((String) result);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ActivityProductDetails.this, (String) result, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            @Override
+            public void OnRequestError(final Exception error) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ActivityProductDetails.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }, request);
     }
 }

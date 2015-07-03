@@ -11,18 +11,26 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btnScan"
+            android:id="@+id/btnScanCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_margin="4dp"
             android:padding="10dp"
-            android:text="Scan" />
+            android:text="Scan CARD" />
+
+        <Button
+            android:id="@+id/btnScanProduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="10dp"
+            android:text="Scan product" />
 
         <Button
             android:id="@+id/btnDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_margin="4dp"
             android:padding="10dp"
             android:text="ProductDetails" />
 

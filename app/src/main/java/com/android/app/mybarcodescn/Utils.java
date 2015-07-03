@@ -27,6 +27,7 @@ import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 /**
  * Created by CodeX on 24.06.2015.
  */
+
 public class Utils {
 
     private static Gson mGson = new Gson();
@@ -60,10 +61,6 @@ public class Utils {
         convertXmltoJSON(xml);
     }
 
-
-
-
-
     public static JSONObject convertXmltoJSON(String xml) {
         JSONObject jsonObj = null;
         try {
@@ -74,8 +71,8 @@ public class Utils {
         }
 
         Log.d("XML", xml);
-
         Log.d("JSON", jsonObj.toString());
+
         return jsonObj;
     }
 
@@ -135,7 +132,7 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return sb.toString().replace("</stock>", "<product fix_bug=\"\"/></stock>");
+        return sb.toString().replace("</stock>", "<product empty=\"\"/></stock>").replace("</magazin>", "<stock empty=\"\"/></magazin>");
     }
 
     private static String convertToHex(byte[] data) {
@@ -193,7 +190,6 @@ public class Utils {
 
     public static void setMyList(ExpandableStickyListHeadersListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
-        //int jjjj = listAdapter.ge
         if (listAdapter == null)
             return;
 

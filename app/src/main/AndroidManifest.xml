@@ -21,6 +21,10 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".ActivityCardScanner"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".ActivityProductDetails"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
