@@ -20,6 +20,15 @@ public class ProductDetails implements Serializable {
     double size;
     int discount_percent;
     Bitmap product_photo;
+    String mStockName;
+
+    public String getmStockName() {
+        return mStockName;
+    }
+
+    public void setmStockName(String mStockName) {
+        this.mStockName = mStockName;
+    }
 
     public Bitmap getProduct_photo() {
         return product_photo;

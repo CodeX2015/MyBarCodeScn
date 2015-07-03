@@ -12,7 +12,7 @@
 
         <Button
             android:id="@+id/btnScanCard"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:padding="10dp"
@@ -20,7 +20,7 @@
 
         <Button
             android:id="@+id/btnScanProduct"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:padding="10dp"
@@ -28,11 +28,11 @@
 
         <Button
             android:id="@+id/btnDetails"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:padding="10dp"
-            android:text="ProductDetails" />
+            android:text="Product Details" />
 
     </LinearLayout>
 
@@ -41,9 +41,12 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/llMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="gone">
 
             <ViewFlipper
                 android:id="@+id/vfPhoto"

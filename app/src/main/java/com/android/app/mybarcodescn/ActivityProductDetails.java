@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -18,6 +19,9 @@ import com.android.app.mybarcodescn.adapters.StickyListHeaderAdapter;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
@@ -72,7 +76,7 @@ public class ActivityProductDetails extends AppCompatActivity {
                 getData(mBarCode, mCardCode);
             }
         });
-
+        prodDet.llMain = (LinearLayout) findViewById(R.id.llMain);
         prodDet.tvName = (TextView) findViewById(R.id.tvName);
         prodDet.tvSeason = (TextView) findViewById(R.id.tvSeason);
         prodDet.tvBatch = (TextView) findViewById(R.id.tvBatch);
@@ -98,7 +102,10 @@ public class ActivityProductDetails extends AppCompatActivity {
         prodDet.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String sendStock = ((Stock) parent.getAdapter().getItem(position)).getName();
+                String sendStock = "Stock: " +
+                        ((ProductDetails) parent.getAdapter().getItem(position)).getmStockName() +
+                        "Size: " +
+                        ((ProductDetails) parent.getAdapter().getItem(position)).getSize();
                 Toast.makeText(ActivityProductDetails.this, sendStock, Toast.LENGTH_LONG).show();
             }
         });
@@ -106,7 +113,9 @@ public class ActivityProductDetails extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null || resultCode != RESULT_OK) {return;}
+        if (data == null || resultCode != RESULT_OK) {
+            return;
+        }
         switch (requestCode) {
             case 1:
                 Toast.makeText(this, "barcode: " + data.getStringExtra("barcode"), Toast.LENGTH_LONG).show();
@@ -163,12 +172,13 @@ public class ActivityProductDetails extends AppCompatActivity {
                 //Utils.deserializeXML((String) result);
                 final Product product = Utils.convertJSONtoProduct(Utils.convertXmltoJSON((String) result));
                 final ArrayList<Stock> stocks = product.getStock();
+                final ArrayList<ProductDetails> products = convertArrayList(product.getStock());
+                Log.d("OneQComplete", String.valueOf(products.size()));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setProductDetails(stocks);
+                        setProductDetails(products);
                         //Toast.makeText(ActivityProductDetails.this, (String) result, Toast.LENGTH_LONG).show();
-
                     }
                 });
             }
@@ -185,26 +195,50 @@ public class ActivityProductDetails extends AppCompatActivity {
         }, request);
     }
 
-    private void setProductDetails(ArrayList<Stock> stocks) {
+    public ArrayList<ProductDetails> convertArrayList(ArrayList<Stock> stocks) {
         if (stocks != null) {
-            prodDet.tvName.setText("Product name: " + stocks.get(0).getProduct().get(0).getName());
-            prodDet.tvSeason.setText("Season: " + stocks.get(0).getProduct().get(0).getSeason());
-            prodDet.tvBatch.setText("Batch: " + stocks.get(0).getProduct().get(0).getBatch());
-            prodDet.tvBarCode.setText("BarCode: " + stocks.get(0).getProduct().get(0).getBarcode());
-            prodDet.tvPrice.setText("Price: " + String.valueOf(stocks.get(0).getProduct().get(0).getPrice()));
-            prodDet.tvDiscountPercent.setText("DiscountPercent: " + String.valueOf(stocks.get(0).getProduct().get(0).getDiscount_percent()));
-            prodDet.tvDiscountSum.setText("DiscountSum: " + String.valueOf(stocks.get(0).getProduct().get(0).getEconom_sum()));
-            prodDet.tvTotalPrice.setText("TotalPrice: " + String.valueOf(stocks.get(0).getProduct().get(0).getTotal_price()));
+            HashMap<String, ProductDetails> productsDetails = new HashMap<String, ProductDetails>();
+            ArrayList<ProductDetails> productDetails = new ArrayList<ProductDetails>();
+            for (Stock stock : stocks) {
+                for (ProductDetails item : stock.getProduct()) {
+                    if (item.getBarcode() != null) {
+                        item.setmStockName(stock.getName());
+                        productsDetails.put(item.getBarcode(), item);
+                    }
+                }
+                productDetails.clear();
+                productDetails.addAll(productsDetails.values());
+            }
+            return productDetails;
+        }
+        return null;
+    }
 
-            if (stocks.get(0).getProduct().get(0).getProduct_photo() == null) {
+    private void setProductDetails(ArrayList<ProductDetails> products) {
+        if (products != null) {
+            prodDet.tvName.setText("Product name: " + products.get(0).getName());
+            prodDet.tvSeason.setText("Season: " + products.get(0).getSeason());
+            prodDet.tvBatch.setText("Batch: " + products.get(0).getBatch());
+            prodDet.tvBarCode.setText("BarCode: " + products.get(0).getBarcode());
+            prodDet.tvPrice.setText("Price: " + products.get(0).getPrice());
+            prodDet.tvDiscountPercent.setText("DiscountPercent: " + products.get(0).getDiscount_percent() + "%");
+            prodDet.tvDiscountSum.setText("DiscountSum: " + products.get(0).getEconom_sum());
+            prodDet.tvTotalPrice.setText("TotalPrice: " + products.get(0).getTotal_price());
+
+            if (products.get(0).getProduct_photo() == null) {
                 prodDet.vfPhoto.setDisplayedChild(0);
-                loadProductPhoto(stocks.get(0).getProduct().get(0));
+                for (ProductDetails product:products) {
+                    if (product.getImage() != null && !product.getImage().equalsIgnoreCase("")) {
+                        loadProductPhoto(product);
+                        break;
+                    }
+                }
             } else {
-                prodDet.ivPhoto.setImageBitmap(stocks.get(0).getProduct().get(0).getProduct_photo());
+                prodDet.ivPhoto.setImageBitmap(products.get(0).getProduct_photo());
                 prodDet.vfPhoto.setDisplayedChild(1);
             }
-
-            prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, stocks));
+            prodDet.llMain.setVisibility(View.VISIBLE);
+            prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, products));
 
             //prodDet.mListView.setAdapter(new MyAdapter(stocks));
             //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
@@ -213,24 +247,31 @@ public class ActivityProductDetails extends AppCompatActivity {
     }
 
     private void loadProductPhoto(ProductDetails productDetails) {
-        NetworkHelper.getImageFromUrl(new NetworkHelper.LoadListener() {
-            @Override
-            public void OnLoadComplete(final Object result) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        prodDet.ivPhoto.setImageBitmap((Bitmap) result);
-                        prodDet.vfPhoto.setDisplayedChild(1);
-                    }
-                });
-            }
+        if (!productDetails.getImage().equalsIgnoreCase("") && productDetails.getImage() != null) {
+            NetworkHelper.getImageFromUrl(new NetworkHelper.LoadListener() {
+                @Override
+                public void OnLoadComplete(final Object result) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            prodDet.ivPhoto.setImageBitmap((Bitmap) result);
+                            prodDet.vfPhoto.setDisplayedChild(1);
+                        }
+                    });
+                }
 
-            @Override
-            public void OnLoadError(Exception error) {
-                Toast.makeText(ActivityProductDetails.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                error.printStackTrace();
-            }
-        }, productDetails.getImage());
+                @Override
+                public void OnLoadError(final Exception error) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ActivityProductDetails.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    error.printStackTrace();
+                }
+            }, productDetails.getImage());
+        }
     }
 
     public String getmCardCode() {
@@ -256,6 +297,7 @@ public class ActivityProductDetails extends AppCompatActivity {
     }
 
     private class ProdDet {
+        private LinearLayout llMain;
         private ViewFlipper vfPhoto;
         private ImageView ivPhoto;
         private TextView tvName;

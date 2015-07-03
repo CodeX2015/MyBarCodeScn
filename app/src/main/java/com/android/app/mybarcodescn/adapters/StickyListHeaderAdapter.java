@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.android.app.mybarcodescn.Product;
 import com.android.app.mybarcodescn.ProductDetails;
 import com.android.app.mybarcodescn.R;
 import com.android.app.mybarcodescn.Stock;
@@ -30,8 +31,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 public class StickyListHeaderAdapter extends BaseAdapter implements
         StickyListHeadersAdapter, SectionIndexer {
-    private Set<Stock> mStocksSet;
-    private ArrayList<Stock> mStocks;
+    private final ArrayList<ProductDetails> mProducts;
     private int[] mSectionIndices;
     private String[] mSectionNames;
     private LayoutInflater mInflater;
@@ -43,25 +43,24 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         return setOfStocks;
     }
 
-    public StickyListHeaderAdapter(Context context, ArrayList<Stock> stocks) {
+    public StickyListHeaderAdapter(Context context, ArrayList<ProductDetails> products) {
         mInflater = LayoutInflater.from(context);
-        mStocks = stocks;
-        StockComparator stockComparator = new StockComparator();
-        Collections.sort(stocks, stockComparator);
+        mProducts = products;
+        ProductComparator productComparator = new ProductComparator();
+        Collections.sort(products, productComparator);
         mSections = findSections();
         Utils.setmHeadersCount(mSections.size());
         mSectionIndices = getSectionIndices();
         mSectionNames = getSectionNames();
-        mStocksSet = convertArrayList2HashSet(stocks);
     }
 
     private int[] getSectionIndices() {
         ArrayList<Integer> sectionIndices = new ArrayList<Integer>();
-        String lastFirstStock = mStocks.get(0).getName();
+        String lastFirstStock = mProducts.get(0).getmStockName();
         sectionIndices.add(0);
-        for (int i = 1; i < mStocks.size(); i++) {
-            if (mStocks.get(i).getName() != lastFirstStock) {
-                lastFirstStock = mStocks.get(i).getName();
+        for (int i = 1; i < mProducts.size(); i++) {
+            if (mProducts.get(i).getmStockName() != lastFirstStock) {
+                lastFirstStock = mProducts.get(i).getmStockName();
                 sectionIndices.add(i);
             }
         }
@@ -84,10 +83,10 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
 
     private LinkedHashMap<String, String> findSections() {
         mSections = new LinkedHashMap<String, String>();
-        int n = mStocks.size();
+        int n = mProducts.size();
         int nSections = 0;
         for (int i = 0; i < n; i++) {
-            String sectionName = mStocks.get(i).getName();
+            String sectionName = mProducts.get(i).getmStockName();
 
             if (!mSections.containsKey(sectionName)) {
                 mSections.put(sectionName, String.valueOf(nSections));
@@ -105,12 +104,12 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
 
     @Override
     public int getCount() {
-        return mStocks.size();
+        return mProducts.size();
     }
 
     @Override
-    public Stock getItem(int position) {
-        return mStocks.get(position);
+    public ProductDetails getItem(int position) {
+        return mProducts.get(position);
     }
 
     @Override
@@ -131,8 +130,8 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         } else {
             myRow = (MyRow) convertView.getTag();
         }
-        myRow.tvSize.setText("Size: " + String.valueOf(getItem(position).getProduct().get(0).getSize()));
-        myRow.tvStock.setText("Stock: " + String.valueOf(getItem(position).getName()));
+        myRow.tvSize.setText("Size: " + String.valueOf(getItem(position).getSize()));
+        myRow.tvStock.setText("Count: " + String.valueOf(getItem(position).getCount()));
 
         return convertView;
     }
@@ -156,7 +155,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         }
 
         Log.d("MYDEBUG", "Stock -" + getItem(position).getName() + " position - " + position);
-        String headerString = mStocks.get(position).getName();
+        String headerString = mProducts.get(position).getmStockName();
         holder.text.setText(headerString);
 
         return convertView;
@@ -170,7 +169,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
     public long getHeaderId(int position) {
         // return the first character of the country as ID because this is what
         // headers are based upon
-        return mStocks.get(position).getName().charAt(0);
+        return mProducts.get(position).getmStockName().charAt(0);
     }
 
     @Override
@@ -206,10 +205,11 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         TextView text;
     }
 
-    private class StockComparator implements Comparator<Stock> {
+    private class ProductComparator implements Comparator<ProductDetails> {
+
         @Override
-        public int compare(Stock stock1, Stock stock2) {
-            return stock1.getName().compareTo(stock2.getName());
+        public int compare(ProductDetails lhs, ProductDetails rhs) {
+            return lhs.getmStockName().compareTo(rhs.getmStockName());
         }
     }
 
