@@ -132,7 +132,8 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return sb.toString().replace("</stock>", "<product empty=\"\"/></stock>").replace("</magazin>", "<stock empty=\"\"/></magazin>");
+        return sb.toString().replace("</stock>", "<product empty=\"\"/></stock>");
+                //.replace("</magazin>", "<stock empty=\"\"/></magazin>");
     }
 
     private static String convertToHex(byte[] data) {

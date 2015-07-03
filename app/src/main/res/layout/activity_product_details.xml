@@ -45,10 +45,23 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ViewFlipper
+                android:id="@+id/vfPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center" />
+
             <ImageView
                 android:id="@+id/ivPhoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            </ViewFlipper>
 
             <TextView
                 android:id="@+id/tvName"

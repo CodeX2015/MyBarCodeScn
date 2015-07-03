@@ -91,7 +91,7 @@ public class ActivityCodeScanner extends AppCompatActivity implements ZXingScann
                 "  photo=\"фото клиента в формате hex\"/>\n" +
                 "</Product>";
 
-        NetworkHelper.findProduct(new NetworkHelper.LoadListener() {
+        NetworkHelper.findProduct(new NetworkHelper.RequestListener() {
 
             @Override
             public void OnRequestComplete(final Object result) {

@@ -55,9 +55,9 @@ public class NetworkHelper {
                         throw new Exception(responseCode + " Bad Response Code");
                     }
                     Bitmap bmp = BitmapFactory.decodeStream(connection.getInputStream());
-                    listener.OnRequestComplete(bmp);
+                    listener.OnLoadComplete(bmp);
                 } catch (Exception ex) {
-                    listener.OnRequestError(ex);
+                    listener.OnLoadError(ex);
                     Log.d("Error Connection, url: " + url, ex.getMessage());
                 }
             }
@@ -85,13 +85,12 @@ public class NetworkHelper {
         });
     }
 
-    public static void findProduct(final LoadListener listener, final String query) {
+    public static void findProduct(final RequestListener listener, final String query) {
         mExecService.execute(new Runnable() {
             @Override
             public void run() {
-
                 try {
-                    BufferedReader in = openConnection("http://vvmarket.cloudapp.net/pos_client/api/", query);
+                    BufferedReader in = openPostConnection("http://vvmarket.cloudapp.net/pos_client/api/", query);
                     String jRequest = Utils.convertStreamToString(in);
                     in.close();
                     listener.OnRequestComplete(jRequest);
@@ -99,12 +98,11 @@ public class NetworkHelper {
                     e.printStackTrace();
                     listener.OnRequestError(e);
                 }
-
             }
         });
     }
 
-    private static BufferedReader openConnection(String url, String query) throws Exception {
+    private static BufferedReader openPostConnection(String url, String query) throws Exception {
             //https://www.hurl.it/
 
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -136,9 +134,14 @@ public class NetworkHelper {
         return in;
     }
 
-    public interface LoadListener {
+    public interface RequestListener {
         void OnRequestComplete(Object result);
         void OnRequestError(Exception error);
+    }
+
+    public interface LoadListener {
+        void OnLoadComplete(Object result);
+        void OnLoadError(Exception error);
     }
 
 }

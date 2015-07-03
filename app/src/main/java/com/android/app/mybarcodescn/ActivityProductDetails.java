@@ -1,14 +1,17 @@
 package com.android.app.mybarcodescn;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.android.app.mybarcodescn.adapters.StickyListHeaderAdapter;
 
@@ -79,6 +82,8 @@ public class ActivityProductDetails extends AppCompatActivity {
         prodDet.tvDiscountSum = (TextView) findViewById(R.id.tvDiscountSum);
         prodDet.tvDiscountPercent = (TextView) findViewById(R.id.tvDiscountPercent);
         prodDet.mListView = (ExpandableStickyListHeadersListView) findViewById(R.id.lv_activity);
+        prodDet.ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
+        prodDet.vfPhoto = (ViewFlipper) findViewById(R.id.vfPhoto);
 
 //        prodDet.mListView.setOnTouchListener(new View.OnTouchListener() {
 //            // Setting on Touch Listener for handling the touch inside ScrollView
@@ -151,7 +156,7 @@ public class ActivityProductDetails extends AppCompatActivity {
                 "\" />\n" +
                 "</magazin>";
 
-        NetworkHelper.findProduct(new NetworkHelper.LoadListener() {
+        NetworkHelper.findProduct(new NetworkHelper.RequestListener() {
 
             @Override
             public void OnRequestComplete(final Object result) {
@@ -191,12 +196,41 @@ public class ActivityProductDetails extends AppCompatActivity {
             prodDet.tvDiscountSum.setText("DiscountSum: " + String.valueOf(stocks.get(0).getProduct().get(0).getEconom_sum()));
             prodDet.tvTotalPrice.setText("TotalPrice: " + String.valueOf(stocks.get(0).getProduct().get(0).getTotal_price()));
 
+            if (stocks.get(0).getProduct().get(0).getProduct_photo() == null) {
+                prodDet.vfPhoto.setDisplayedChild(0);
+                loadProductPhoto(stocks.get(0).getProduct().get(0));
+            } else {
+                prodDet.ivPhoto.setImageBitmap(stocks.get(0).getProduct().get(0).getProduct_photo());
+                prodDet.vfPhoto.setDisplayedChild(1);
+            }
+
             prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, stocks));
 
             //prodDet.mListView.setAdapter(new MyAdapter(stocks));
             //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
             Utils.setMyList(prodDet.mListView);
         }
+    }
+
+    private void loadProductPhoto(ProductDetails productDetails) {
+        NetworkHelper.getImageFromUrl(new NetworkHelper.LoadListener() {
+            @Override
+            public void OnLoadComplete(final Object result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        prodDet.ivPhoto.setImageBitmap((Bitmap) result);
+                        prodDet.vfPhoto.setDisplayedChild(1);
+                    }
+                });
+            }
+
+            @Override
+            public void OnLoadError(Exception error) {
+                Toast.makeText(ActivityProductDetails.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        }, productDetails.getImage());
     }
 
     public String getmCardCode() {
@@ -222,6 +256,8 @@ public class ActivityProductDetails extends AppCompatActivity {
     }
 
     private class ProdDet {
+        private ViewFlipper vfPhoto;
+        private ImageView ivPhoto;
         private TextView tvName;
         private TextView tvSeason;
         private TextView tvBatch;
@@ -261,7 +297,7 @@ public class ActivityProductDetails extends AppCompatActivity {
                 "  photo=\"фото клиента в формате hex\"/>\n" +
                 "</Product>";
 
-        NetworkHelper.findProduct(new NetworkHelper.LoadListener() {
+        NetworkHelper.findProduct(new NetworkHelper.RequestListener() {
 
             @Override
             public void OnRequestComplete(final Object result) {
