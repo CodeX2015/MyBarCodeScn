@@ -5,17 +5,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 
-import com.android.app.mybarcodescn.adapters.StickyListHeaderAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.thoughtworks.xstream.XStream;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -25,7 +25,7 @@ import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
 
 /**
- * Created by huligun on 24.06.2015.
+ * Created by CodeX on 24.06.2015.
  */
 public class Utils {
 
@@ -56,7 +56,7 @@ public class Utils {
                 "  wear_size=\"M\"\n" +
                 "  shoes_size=\"7\"\n" +
                 "  photo=\"фото клиента в формате hex\"/> \n" +
-                "</magazin>";
+                "</Product>";
         convertXmltoJSON(xml);
     }
 
@@ -84,16 +84,16 @@ public class Utils {
         String json = jsonObj.toString();
         JsonObject jRequest = mGson.fromJson(json, JsonObject.class).getAsJsonObject("magazin");
         convertJsonToXml(jRequest.toString());
-        Magazin magazin = mGson.fromJson(jRequest, new TypeToken<Magazin>() {
-        }.getType());
+//        VipCard Product = mGson.fromJson(jRequest, new TypeToken<VipCard>() {
+//        }.getType());
     }
 
     public static Product convertJSONtoProduct(JSONObject jsonObj) {
         String json = jsonObj.toString();
         JsonObject jRequest = mGson.fromJson(json, JsonObject.class).getAsJsonObject("magazin");
-        Product product = mGson.fromJson(jRequest, new TypeToken<Product>() {
+        Product Magazin = mGson.fromJson(jRequest, new TypeToken<Product>() {
         }.getType());
-        return product;
+        return Magazin;
     }
 
     static void convertJsonToXml(String str){
@@ -104,6 +104,17 @@ public class Utils {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void deserializeXML (String xml) {
+        XStream xstream = new XStream();
+        xstream.alias("magazin", Product.class);
+        xstream.alias("stock", Stock.class);
+        xstream.alias("product", ProductDetails.class);
+        xstream.addImplicitCollection(Product.class, "stock");
+        xstream.addImplicitCollection(Stock.class, "product");
+        Product magazin = (Product)xstream.fromXML(xml);
+        String wewe = magazin.getDescription();
     }
 
     public static String convertStreamToString(BufferedReader reader) {
@@ -119,13 +130,12 @@ public class Utils {
         String line = null;
         try {
             while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String nn = sb.toString().replace("</stock>", "<product season=\"\"/></stock>");
-        return nn;
+        return sb.toString().replace("</stock>", "<product fix_bug=\"\"/></stock>");
     }
 
     private static String convertToHex(byte[] data) {

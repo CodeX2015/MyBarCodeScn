@@ -3,11 +3,8 @@ package com.android.app.mybarcodescn;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,7 +108,7 @@ public class ActivityProductDetails extends AppCompatActivity {
         }
 
         String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<magazin>\n" + "\t<seller login=\"" +
+                "<Product>\n" + "\t<seller login=\"" +
                 login +
                 "\" stock=\"" +
                 password +
@@ -121,12 +118,13 @@ public class ActivityProductDetails extends AppCompatActivity {
                 checksum + "\" act=\"17\">\n" +
                 "    </seller>\n" + "    <product barcode=\"" +
                 barcode +
-                "\" />\n" + "</magazin>";
+                "\" />\n" + "</Product>";
 
         NetworkHelper.findProduct(new NetworkHelper.LoadListener() {
 
             @Override
             public void OnRequestComplete(final Object result) {
+                //Utils.deserializeXML((String) result);
                 final Product product = Utils.convertJSONtoProduct(Utils.convertXmltoJSON((String) result));
                 final ArrayList<Stock> stocks = product.getStock();
                 runOnUiThread(new Runnable() {

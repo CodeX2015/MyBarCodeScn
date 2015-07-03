@@ -1,5 +1,7 @@
 package com.android.app.mybarcodescn;
 
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 public class Product implements Serializable{
     int status;
     String description;
+
+    @XStreamImplicit
     ArrayList<Stock> stock = new ArrayList<Stock>();
 
     public int getStatus() {

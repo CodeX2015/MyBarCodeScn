@@ -15,7 +15,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  */
 public class ActivityCodeScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
-    private Product product;
+    private Product Magazin;
     private ZXingScannerView mScannerView;
     public String TAG = "BARCODEScn";
 
@@ -65,17 +65,17 @@ public class ActivityCodeScanner extends AppCompatActivity implements ZXingScann
 
     private void network(String barcode) {
         String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<magazin>\n" +
+                "<Product>\n" +
                 "\t<seller login=\"__Said__\" stock=\"cash_lining\" date=\"2015-06-18 16:02:25\" checksum=\"f723d56ed587de28f869ebb73e817696188aa921\" act=\"17\">\n" +
                 "    </seller>\n" +
-                "    <product barcode=\"" +
+                "    <Product barcode=\"" +
                 barcode +
                 "\" />\n" +
-                "</magazin>";
+                "</Product>";
 
         //query is your body
         String query = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<magazin>\n" +
+                "<Product>\n" +
                 " <seller login=\"__Said__\" stock=\"cash_lining\" date=\"2015-06-18 16:02:25\" checksum=\"f723d56ed587de28f869ebb73e817696188aa921\" act=\"4\">\n" +
                 "    </seller>\n" +
                 "    <discount \n" +
@@ -89,7 +89,7 @@ public class ActivityCodeScanner extends AppCompatActivity implements ZXingScann
                 "  wear_size=\"M\"\n" +
                 "  shoes_size=\"7\"\n" +
                 "  photo=\"фото клиента в формате hex\"/>\n" +
-                "</magazin>";
+                "</Product>";
 
         NetworkHelper.findProduct(new NetworkHelper.LoadListener() {
 

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by CodeX on 24.06.2015.
  */
-public class Magazin implements Serializable{
+public class VipCard implements Serializable{
     Seller seller;
     Discount discount;
 
