@@ -178,7 +178,7 @@ public class ActivityProductDetails extends AppCompatActivity {
                 "\" />\n" +
                 "</magazin>";
 
-        NetworkHelper.findProduct(new NetworkHelper.RequestListener() {
+        NetworkHelper.postRequest(new NetworkHelper.RequestListener() {
 
             @Override
             public void OnRequestComplete(final Object result) {
@@ -337,7 +337,7 @@ public class ActivityProductDetails extends AppCompatActivity {
                 "  photo=\"фото клиента в формате hex\"/>\n" +
                 "</Product>";
 
-        NetworkHelper.findProduct(new NetworkHelper.RequestListener() {
+        NetworkHelper.postRequest(new NetworkHelper.RequestListener() {
 
             @Override
             public void OnRequestComplete(final Object result) {

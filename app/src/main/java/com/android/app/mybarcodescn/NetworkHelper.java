@@ -85,7 +85,7 @@ public class NetworkHelper {
         });
     }
 
-    public static void findProduct(final RequestListener listener, final String query) {
+    public static void postRequest(final RequestListener listener, final String query) {
         mExecService.execute(new Runnable() {
             @Override
             public void run() {
