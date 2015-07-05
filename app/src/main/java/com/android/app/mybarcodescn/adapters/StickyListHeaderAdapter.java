@@ -44,6 +44,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         Collections.sort(products, productComparator);
         mSections = findSections();
         Utils.setmHeadersCount(mSections.size());
+
         mSectionIndices = getSectionIndices();
         mSectionNames = getSectionNames();
     }
@@ -146,7 +147,6 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
         }
-
         Log.d("MYDEBUG", "Stock -" + getItem(position).getmStockName() + " position - " + position);
         String headerString = mProducts.get(position).getmStockName();
         holder.text.setText(headerString);

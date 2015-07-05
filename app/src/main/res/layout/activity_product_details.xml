@@ -11,6 +11,14 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/btnAddCard"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="10dp"
+            android:text="Add CARD" />
+
+        <Button
             android:id="@+id/btnScanCard"
             android:layout_width="80dp"
             android:layout_height="wrap_content"

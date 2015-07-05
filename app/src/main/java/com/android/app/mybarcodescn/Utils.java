@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
@@ -37,6 +38,15 @@ public class Utils {
 
     private static Gson mGson = new Gson();
     private static int mHeadersCount;
+    private static int mHeaderHeight;
+
+    public static int getHeaderHeight() {
+        return mHeaderHeight;
+    }
+
+    public static void setHeaderHeight(int mHeaderHeight) {
+        Utils.mHeaderHeight = mHeaderHeight;
+    }
 
     public int getmHeadersCount() {
         return mHeadersCount;
@@ -196,7 +206,7 @@ public class Utils {
     }
 
 
-    public static void setMyList(ExpandableStickyListHeadersListView listView) {
+    public static void setMyList(Context context, ExpandableStickyListHeadersListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)
             return;
@@ -217,7 +227,7 @@ public class Utils {
 
         for (int i = 0; i < mHeadersCount; i++) {
 
-            totalHeight += 38;
+            totalHeight += convertDp2Px(context);
         }
 
 
@@ -240,10 +250,28 @@ public class Utils {
         listView.requestLayout();
     }
 
-    public static float convertDp2Px(Context context, int dp) {
+    public static float convertDp2Px(Context context) {
         Resources r = context.getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, r.getDimension(R.dimen.activity_list_header), r.getDisplayMetrics());
         return  px;
+    }
+
+    public static ArrayList<ProductDetails> convertArrayList(ArrayList<Stock> stocks) {
+        if (stocks != null) {
+            ArrayList<ProductDetails> productDetails = new ArrayList<ProductDetails>();
+            for (Stock stock : stocks) {
+                if (stock.getName() != null) {
+                    for (ProductDetails item : stock.getProduct()) {
+                        if (item.getBarcode() != null) {
+                            item.setmStockName(stock.getName());
+                            productDetails.add(item);
+                        }
+                    }
+                }
+            }
+            return productDetails;
+        }
+        return null;
     }
 
 }

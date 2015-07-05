@@ -36,6 +36,7 @@ public class ActivityProductDetails extends AppCompatActivity {
 
     private Button btnScanProduct;
     private Button btnScanCard;
+    private Button btnAddCard;
     private Button btnDetails;
     private String mCardCode = "000000000000";
     private String mBarCode = "6913657077940";
@@ -51,12 +52,21 @@ public class ActivityProductDetails extends AppCompatActivity {
 
         btnScanProduct = (Button) findViewById(R.id.btnScanProduct);
         btnScanCard = (Button) findViewById(R.id.btnScanCard);
-
+        btnAddCard = (Button) findViewById(R.id.btnAddCard);
         btnDetails = (Button) findViewById(R.id.btnDetails);
+
+        btnAddCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ActivityProductDetails.this, ActivityVipCard.class);
+                startActivityForResult(intent, 0);
+            }
+        });
 
         btnScanProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setmCardCode("");
                 Intent intent = new Intent(ActivityProductDetails.this, ActivityCodeScanner.class);
                 startActivityForResult(intent, 1);
             }
@@ -65,6 +75,7 @@ public class ActivityProductDetails extends AppCompatActivity {
         btnScanCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setmCardCode("");
                 Intent intent = new Intent(ActivityProductDetails.this, ActivityCardScanner.class);
                 startActivityForResult(intent, 2);
             }
@@ -73,9 +84,12 @@ public class ActivityProductDetails extends AppCompatActivity {
         btnDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mCardCode = "000000000000";
+                mBarCode = "6913657077940";
                 getData(mBarCode, mCardCode);
             }
         });
+
         prodDet.llMain = (LinearLayout) findViewById(R.id.llMain);
         prodDet.tvName = (TextView) findViewById(R.id.tvName);
         prodDet.tvSeason = (TextView) findViewById(R.id.tvSeason);
@@ -120,7 +134,6 @@ public class ActivityProductDetails extends AppCompatActivity {
             case 1:
                 Toast.makeText(this, "barcode: " + data.getStringExtra("barcode"), Toast.LENGTH_LONG).show();
                 Log.d("ActivityResult", data.getStringExtra("barcode"));
-                setmBarCode(data.getStringExtra("barcode"));
                 setmBarCode(data.getStringExtra("barcode"));
                 getData(mBarCode, mCardCode);
                 break;
@@ -172,7 +185,7 @@ public class ActivityProductDetails extends AppCompatActivity {
                 //Utils.deserializeXML((String) result);
                 final Product product = Utils.convertJSONtoProduct(Utils.convertXmltoJSON((String) result));
                 final ArrayList<Stock> stocks = product.getStock();
-                final ArrayList<ProductDetails> products = convertArrayList(product.getStock());
+                final ArrayList<ProductDetails> products = Utils.convertArrayList(product.getStock());
                 Log.d("OneQComplete", String.valueOf(products.size()));
                 runOnUiThread(new Runnable() {
                     @Override
@@ -195,27 +208,7 @@ public class ActivityProductDetails extends AppCompatActivity {
         }, request);
     }
 
-    public ArrayList<ProductDetails> convertArrayList(ArrayList<Stock> stocks) {
-        if (stocks != null) {
-            HashMap<String, ProductDetails> productsDetails = new HashMap<String, ProductDetails>();
-            ArrayList<ProductDetails> productDetails = new ArrayList<ProductDetails>();
-            for (Stock stock : stocks) {
-                if (stock.getName() != null) {
-                    for (ProductDetails item : stock.getProduct()) {
-                        if (item.getBarcode() != null) {
-                            item.setmStockName(stock.getName());
-                            //productsDetails.put(item.getBarcode(), item);
-                            productDetails.add(item);
-                        }
-                    }
-                }
-            }
-            //productDetails.clear();
-            //productDetails.addAll(productsDetails.values());
-            return productDetails;
-        }
-        return null;
-    }
+
 
     private void setProductDetails(ArrayList<ProductDetails> products) {
         if (products != null) {
@@ -247,7 +240,7 @@ public class ActivityProductDetails extends AppCompatActivity {
             prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, products));
 
             //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
-            Utils.setMyList(prodDet.mListView);
+            Utils.setMyList(this, prodDet.mListView);
         }
     }
 
