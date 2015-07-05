@@ -1,9 +1,13 @@
 package com.android.app.mybarcodescn;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
+import android.widget.ViewFlipper;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -13,6 +17,7 @@ import com.thoughtworks.xstream.XStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -76,7 +81,7 @@ public class Utils {
         return jsonObj;
     }
 
-    private static void convertJSONtoMagazin(JSONObject jsonObj){
+    private static void convertJSONtoMagazin(JSONObject jsonObj) {
 
         String json = jsonObj.toString();
         JsonObject jRequest = mGson.fromJson(json, JsonObject.class).getAsJsonObject("magazin");
@@ -93,7 +98,7 @@ public class Utils {
         return Magazin;
     }
 
-    static void convertJsonToXml(String str){
+    static void convertJsonToXml(String str) {
         JSONObject json = null;
         try {
             json = new JSONObject(str);
@@ -103,14 +108,14 @@ public class Utils {
         }
     }
 
-    public static void deserializeXML (String xml) {
+    public static void deserializeXML(String xml) {
         XStream xstream = new XStream();
         xstream.alias("magazin", Product.class);
         xstream.alias("stock", Stock.class);
         xstream.alias("product", ProductDetails.class);
         xstream.addImplicitCollection(Product.class, "stock");
         xstream.addImplicitCollection(Stock.class, "product");
-        Product magazin = (Product)xstream.fromXML(xml);
+        Product magazin = (Product) xstream.fromXML(xml);
         String wewe = magazin.getDescription();
     }
 
@@ -132,8 +137,8 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return sb.toString().replace("</stock>", "<product empty=\"\"/></stock>");
-                //.replace("</magazin>", "<stock empty=\"\"/></magazin>");
+
+        return sb.toString().replace("</stock>", "<product empty=\"\"/></stock>").replace("</magazin>", "<stock empty=\"\"/></magazin>");
     }
 
     private static String convertToHex(byte[] data) {
@@ -162,9 +167,11 @@ public class Utils {
         return sdfDate.format(now);
     }
 
-    /**** Method for Setting the Height of the ListView dynamically.
-     **** Hack to fix the issue of not showing all the items of the ListView
-     **** when placed inside a ScrollView  ****/
+    /****
+     * Method for Setting the Height of the ListView dynamically.
+     * *** Hack to fix the issue of not showing all the items of the ListView
+     * *** when placed inside a ScrollView
+     ****/
     public static void setListViewHeightBasedOnChildren(ExpandableStickyListHeadersListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)
@@ -196,19 +203,47 @@ public class Utils {
 
         int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
         int totalHeight = 0;
-        View view = null;
+//        viewHeader = listAdapter.getView(0, null, listView);
+//        viewHeader.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+//        viewItem = listAdapter.getView(0, null, listView);
+//        viewItem.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        view = listAdapter.getView(0, view, listView);
-        view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        for (int i = 0; i < mHeadersCount; i++) {
+
+            totalHeight += 38;
+        }
 
 
-        view.measure(View.MeasureSpec.makeMeasureSpec(desiredWidth, View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        totalHeight = (view.getMeasuredHeight()*(listAdapter.getCount() + mHeadersCount)+view.getMeasuredHeight());
+//        viewHeader.measure(
+//                View.MeasureSpec.makeMeasureSpec(desiredWidth, View.MeasureSpec.AT_MOST),
+//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        //totalHeight += viewHeader.getMeasuredHeight();
+//        viewItem.measure(
+//                View.MeasureSpec.makeMeasureSpec(desiredWidth, View.MeasureSpec.AT_MOST),
+//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+//
+//        totalHeight = (viewHeader.getMeasuredHeight()*mHeadersCount) + (viewItem.getMeasuredHeight()*(listAdapter.getCount()-1));
+
+
+        //totalHeight = (viewHeader.getMeasuredHeight()*(listAdapter.getCount() + mHeadersCount)+viewHeader.getMeasuredHeight());
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        params.height = totalHeight + (listView.getDividerHeight() * listAdapter.getCount()); //+ (viewHeader.getMeasuredHeight()*mHeadersCount);
         listView.setLayoutParams(params);
         listView.requestLayout();
+    }
+
+    public static float convertDp2Px(Context context, int dp) {
+        Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+        return  px;
     }
 
 }

@@ -37,12 +37,6 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
     private LayoutInflater mInflater;
     LinkedHashMap<String, String> mSections;
 
-
-    public Set<Stock> convertArrayList2HashSet(ArrayList<Stock> stocks) {
-        Set<Stock> setOfStocks = new HashSet<Stock>(stocks);
-        return setOfStocks;
-    }
-
     public StickyListHeaderAdapter(Context context, ArrayList<ProductDetails> products) {
         mInflater = LayoutInflater.from(context);
         mProducts = products;
@@ -119,7 +113,6 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        //Todo adapter parameter HashSet() stocks
         MyRow myRow;
         if (convertView == null) {
             myRow = new MyRow();
@@ -154,7 +147,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
             holder = (HeaderViewHolder) convertView.getTag();
         }
 
-        Log.d("MYDEBUG", "Stock -" + getItem(position).getName() + " position - " + position);
+        Log.d("MYDEBUG", "Stock -" + getItem(position).getmStockName() + " position - " + position);
         String headerString = mProducts.get(position).getmStockName();
         holder.text.setText(headerString);
 
@@ -169,7 +162,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
     public long getHeaderId(int position) {
         // return the first character of the country as ID because this is what
         // headers are based upon
-        return mProducts.get(position).getmStockName().charAt(0);
+        return mProducts.get(position).getmStockName().charAt(1);
     }
 
     @Override

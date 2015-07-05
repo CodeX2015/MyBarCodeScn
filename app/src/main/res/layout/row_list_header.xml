@@ -3,6 +3,7 @@
     android:id="@+id/list_header_title"
     android:layout_width="match_parent"
     android:layout_height="25dp"
+    android:minHeight="25dp"
     android:gravity="center|center_vertical"
     android:scrollbars="none"
     android:text="header"

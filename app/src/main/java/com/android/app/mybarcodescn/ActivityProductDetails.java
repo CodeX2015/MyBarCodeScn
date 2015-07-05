@@ -200,15 +200,18 @@ public class ActivityProductDetails extends AppCompatActivity {
             HashMap<String, ProductDetails> productsDetails = new HashMap<String, ProductDetails>();
             ArrayList<ProductDetails> productDetails = new ArrayList<ProductDetails>();
             for (Stock stock : stocks) {
-                for (ProductDetails item : stock.getProduct()) {
-                    if (item.getBarcode() != null) {
-                        item.setmStockName(stock.getName());
-                        productsDetails.put(item.getBarcode(), item);
+                if (stock.getName() != null) {
+                    for (ProductDetails item : stock.getProduct()) {
+                        if (item.getBarcode() != null) {
+                            item.setmStockName(stock.getName());
+                            //productsDetails.put(item.getBarcode(), item);
+                            productDetails.add(item);
+                        }
                     }
                 }
-                productDetails.clear();
-                productDetails.addAll(productsDetails.values());
             }
+            //productDetails.clear();
+            //productDetails.addAll(productsDetails.values());
             return productDetails;
         }
         return null;
@@ -224,15 +227,18 @@ public class ActivityProductDetails extends AppCompatActivity {
             prodDet.tvDiscountPercent.setText("DiscountPercent: " + products.get(0).getDiscount_percent() + "%");
             prodDet.tvDiscountSum.setText("DiscountSum: " + products.get(0).getEconom_sum());
             prodDet.tvTotalPrice.setText("TotalPrice: " + products.get(0).getTotal_price());
+            boolean mPhotoFlag = false;
 
             if (products.get(0).getProduct_photo() == null) {
                 prodDet.vfPhoto.setDisplayedChild(0);
-                for (ProductDetails product:products) {
+                for (ProductDetails product : products) {
                     if (product.getImage() != null && !product.getImage().equalsIgnoreCase("")) {
                         loadProductPhoto(product);
+                        mPhotoFlag = true;
                         break;
                     }
                 }
+               if (!mPhotoFlag) {prodDet.vfPhoto.setVisibility(View.GONE);}
             } else {
                 prodDet.ivPhoto.setImageBitmap(products.get(0).getProduct_photo());
                 prodDet.vfPhoto.setDisplayedChild(1);
@@ -240,7 +246,6 @@ public class ActivityProductDetails extends AppCompatActivity {
             prodDet.llMain.setVisibility(View.VISIBLE);
             prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, products));
 
-            //prodDet.mListView.setAdapter(new MyAdapter(stocks));
             //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
             Utils.setMyList(prodDet.mListView);
         }
