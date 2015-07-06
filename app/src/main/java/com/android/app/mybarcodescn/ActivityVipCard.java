@@ -13,14 +13,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by CodeX on 05.07.2015.
@@ -43,10 +40,7 @@ public class ActivityVipCard extends AppCompatActivity {
 
     File directory;
     final int TYPE_PHOTO = 1;
-    final int TYPE_VIDEO = 2;
-
     final int REQUEST_CODE_PHOTO = 1;
-    final int REQUEST_CODE_VIDEO = 2;
     final String TAG = "myLogs";
 
     @Override
@@ -93,10 +87,6 @@ public class ActivityVipCard extends AppCompatActivity {
             case TYPE_PHOTO:
                 file = new File(directory.getPath() + "/" + "photo_"
                         + System.currentTimeMillis() + ".jpg");
-                break;
-            case TYPE_VIDEO:
-                file = new File(directory.getPath() + "/" + "video_"
-                        + System.currentTimeMillis() + ".mp4");
                 break;
         }
         Log.d(TAG, "fileName = " + file);
@@ -163,7 +153,7 @@ public class ActivityVipCard extends AppCompatActivity {
                 date +
                 "\" checksum=\"" +
                 checksum +
-                "\" act=\"17\">\n" +
+                "\" act=\"4\">\n" +
                 "</seller>\n" + "<discount first_name=\"" +
                 etFName.getText().toString() +
                 "\"\n" + "last_name=\"" +

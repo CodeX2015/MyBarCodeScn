@@ -127,12 +127,12 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
                         ((ProductDetails) parent.getAdapter().getItem(position)).getSize();
                 Toast.makeText(ActivityProductDetails.this, sendStock, Toast.LENGTH_LONG).show();
 
-                show("Chose count of " + ((ProductDetails) parent.getAdapter().getItem(position)).getName());
+                show("Chose count of " + ((ProductDetails) parent.getAdapter().getItem(position)).getName(), ((ProductDetails) parent.getAdapter().getItem(position)));
             }
         });
     }
 
-    public void show(String title) {
+    public void show(String title, final ProductDetails product) {
 
         final Dialog d = new Dialog(ActivityProductDetails.this);
         d.setTitle(title);
@@ -149,6 +149,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
             public void onClick(View v) {
                 //tv.setText(String.valueOf(np.getValue()));
                 Toast.makeText(ActivityProductDetails.this, String.valueOf(np.getValue()), Toast.LENGTH_LONG).show();
+                sendToStorer(product);
                 d.dismiss();
             }
         });
@@ -244,6 +245,46 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
         }, request);
     }
 
+    public void sendToStorer(ProductDetails product) {
+        String date = Utils.getCurrentTimeStamp();
+        String login = "__Said__";
+        String password = "cash_lining";
+        String checksum = "";
+        try {
+            checksum = Utils.SHA1(date + "#" + login + "#" + password);
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<magazin>\n" +
+                "<seller login=\"" +
+                login + "\" " +
+                "stock=\"" +
+                password + "\" " +
+                "date=" + "\"" +
+                date + "\" " +
+                "checksum=\"" +
+                checksum + "\" " +
+                "act=\"18\">\n" +
+                "</seller>\n" +
+                "<stock name=\"" +
+                product.getmStockName() + "\" " +
+                "code=\"stock_code\">     \n" +
+                "<product barcode=\"" +
+                product.getBarcode() +
+                "\" \n" +
+                "name=\"" +
+                product.getName() +
+                "\"\n" +
+                "size=\"M\"\n" +
+                "batch=\"2015Q1\"    \n" +
+                "season=\"Q1\"\n" +
+                "count=\"1\" />\n" +
+                "</stock>\n" +
+                "</magazin>\n";
+
+    }
 
     private void setProductDetails(ArrayList<ProductDetails> products) {
         if (products != null) {
