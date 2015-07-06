@@ -1,8 +1,11 @@
 package com.android.app.mybarcodescn;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -32,7 +36,7 @@ import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
 //Todo create button and method for scan discont card from product details activity
 
-public class ActivityProductDetails extends AppCompatActivity {
+public class ActivityProductDetails extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
 
     private Button btnScanProduct;
     private Button btnScanCard;
@@ -49,6 +53,7 @@ public class ActivityProductDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_product_details);
+
 
         btnScanProduct = (Button) findViewById(R.id.btnScanProduct);
         btnScanCard = (Button) findViewById(R.id.btnScanCard);
@@ -118,11 +123,42 @@ public class ActivityProductDetails extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String sendStock = "Stock: " +
                         ((ProductDetails) parent.getAdapter().getItem(position)).getmStockName() +
-                        "Size: " +
+                        " Size: " +
                         ((ProductDetails) parent.getAdapter().getItem(position)).getSize();
                 Toast.makeText(ActivityProductDetails.this, sendStock, Toast.LENGTH_LONG).show();
+
+                show("Chose count of " + ((ProductDetails) parent.getAdapter().getItem(position)).getName());
             }
         });
+    }
+
+    public void show(String title) {
+
+        final Dialog d = new Dialog(ActivityProductDetails.this);
+        d.setTitle(title);
+        d.setContentView(R.layout.dialog_set_count);
+        Button b1 = (Button) d.findViewById(R.id.button1);
+        Button b2 = (Button) d.findViewById(R.id.button2);
+        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+        np.setMaxValue(1000);
+        np.setMinValue(1);
+        np.setWrapSelectorWheel(false);
+        np.setOnValueChangedListener(ActivityProductDetails.this);
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //tv.setText(String.valueOf(np.getValue()));
+                Toast.makeText(ActivityProductDetails.this, String.valueOf(np.getValue()), Toast.LENGTH_LONG).show();
+                d.dismiss();
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                d.dismiss();
+            }
+        });
+        d.show();
     }
 
     @Override
@@ -209,7 +245,6 @@ public class ActivityProductDetails extends AppCompatActivity {
     }
 
 
-
     private void setProductDetails(ArrayList<ProductDetails> products) {
         if (products != null) {
             prodDet.tvName.setText("Product name: " + products.get(0).getName());
@@ -231,7 +266,9 @@ public class ActivityProductDetails extends AppCompatActivity {
                         break;
                     }
                 }
-               if (!mPhotoFlag) {prodDet.vfPhoto.setVisibility(View.GONE);}
+                if (!mPhotoFlag) {
+                    prodDet.vfPhoto.setVisibility(View.GONE);
+                }
             } else {
                 prodDet.ivPhoto.setImageBitmap(products.get(0).getProduct_photo());
                 prodDet.vfPhoto.setDisplayedChild(1);
@@ -292,6 +329,11 @@ public class ActivityProductDetails extends AppCompatActivity {
 
     public void setmBarCode(String mBarCode) {
         this.mBarCode = mBarCode;
+    }
+
+    @Override
+    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+
     }
 
     private class ProdDet {

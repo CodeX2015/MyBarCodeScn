@@ -165,27 +165,27 @@ public class ActivityVipCard extends AppCompatActivity {
                 checksum +
                 "\" act=\"17\">\n" +
                 "</seller>\n" + "<discount first_name=\"" +
-                //etFName.getText().toString() +
+                etFName.getText().toString() +
                 "\"\n" + "last_name=\"" +
-                //etLName.getText().toString() +
+                etLName.getText().toString() +
                 "\"\n" + "patronymic=\"" +
-                //etMName.getText().toString() +
+                etMName.getText().toString() +
                 "\"\n" + "phone=\"" +
-                //etPhone.getText().toString() +
+                etPhone.getText().toString() +
                 "\"\n" + "discount_code=\"" +
-                //etDiscountCode.getText().toString() +
+                etDiscountCode.getText().toString() +
                 "\"\n" + "email=\"" +
-                //etEmail.getText().toString() +
+                etEmail.getText().toString() +
                 "\"\n" + "birthday=\"" +
-                //etBirthday.getText().toString() +
+                etBirthday.getText().toString() +
                 "\"\n" + "wear_size=\"" +
                 //etWear.getText().toString() +
                 "\"\n" + "shoes_size=\"" +
                 //etShoes.getText().toString() +
                 "\"\n" + "photo=\"" +
-                //Utils.bytesToHex(
-                //        Utils.getBytes(
-                //                ((BitmapDrawable) ivPhoto.getDrawable()).getBitmap())) +
+                Utils.bytesToHex(
+                        Utils.getBytes(
+                                ((BitmapDrawable) ivPhoto.getDrawable()).getBitmap())) +
                 "\"/>\n" + "</magazin>";
 
 

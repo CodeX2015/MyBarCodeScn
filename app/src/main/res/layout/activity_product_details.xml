@@ -25,6 +25,13 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:text="Scan CARD" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnScanProduct"
@@ -62,16 +69,16 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp">
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center" />
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center" />
 
-            <ImageView
-                android:id="@+id/ivPhoto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <ImageView
+                    android:id="@+id/ivPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </ViewFlipper>
 
             <TextView
