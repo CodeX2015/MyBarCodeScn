@@ -71,8 +71,8 @@ public class ActivityVipCard extends AppCompatActivity {
         etDiscountCode = (EditText) findViewById(R.id.etDiscountCode);
         etEmail = (EditText) findViewById(R.id.etEmail);
         etBirthday = (EditText) findViewById(R.id.etBirthday);
-        etFName = (EditText) findViewById(R.id.etWear);
-        etFName = (EditText) findViewById(R.id.etShoes);
+        etWear = (EditText) findViewById(R.id.etWear);
+        etShoes = (EditText) findViewById(R.id.etShoes);
         ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
 
         btnAddPhoto = (Button) findViewById(R.id.btnAddPhoto);
@@ -179,7 +179,7 @@ public class ActivityVipCard extends AppCompatActivity {
                 "\"\n" + "birthday=\"" +
                 etBirthday.getText().toString() +
                 "\"\n" + "wear_size=\"" +
-                //etWear.getText().toString() +
+                etWear.getText().toString() +
                 "\"\n" + "shoes_size=\"" +
                 //etShoes.getText().toString() +
                 "\"\n" + "photo=\"" +
