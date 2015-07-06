@@ -21,6 +21,15 @@ public class ProductDetails implements Serializable {
     int discount_percent;
     Bitmap product_photo;
     String mStockName;
+    String mStockCode;
+
+    public String getmStockCode() {
+        return mStockCode;
+    }
+
+    public void setmStockCode(String mStockCode) {
+        this.mStockCode = mStockCode;
+    }
 
     public String getmStockName() {
         return mStockName;

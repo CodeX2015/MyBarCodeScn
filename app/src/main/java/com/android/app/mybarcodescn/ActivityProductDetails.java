@@ -149,7 +149,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
             public void onClick(View v) {
                 //tv.setText(String.valueOf(np.getValue()));
                 Toast.makeText(ActivityProductDetails.this, String.valueOf(np.getValue()), Toast.LENGTH_LONG).show();
-                sendToStorer(product);
+                sendToStorer(product, np.getValue());
                 d.dismiss();
             }
         });
@@ -197,22 +197,14 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
 
         String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<magazin>\n" +
-                "\t<seller login=\"" +
-                login +
-                "\" stock=\"" +
-                password +
-                "\" date=\"" +
-                date +
-                "\" checksum=\"" +
-                checksum +
+                "\t<seller login=\"" + login +
+                "\" stock=\"" + password +
+                "\" date=\"" + date +
+                "\" checksum=\"" + checksum +
                 "\" act=\"17\">\n" +
-                "    </seller>\n" +
-                "    <product barcode=\"" +
-                barcode +
-                "\" />\n" +
-                "    <client barcode=\"" +
-                cardcode +
-                "\" />\n" +
+                "</seller>\n" +
+                "<product barcode=\"" + barcode + "\" />\n" +
+                "<client barcode=\"" + cardcode + "\" />\n" +
                 "</magazin>";
 
         NetworkHelper.postRequest(new NetworkHelper.RequestListener() {
@@ -245,7 +237,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
         }, request);
     }
 
-    public void sendToStorer(ProductDetails product) {
+    public void sendToStorer(ProductDetails product, int count) {
         String date = Utils.getCurrentTimeStamp();
         String login = "__Said__";
         String password = "cash_lining";
@@ -258,32 +250,34 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
 
         String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<magazin>\n" +
-                "<seller login=\"" +
-                login + "\" " +
-                "stock=\"" +
-                password + "\" " +
-                "date=" + "\"" +
-                date + "\" " +
-                "checksum=\"" +
-                checksum + "\" " +
+                "<seller login=\"" + login + "\" " +
+                "stock=\"" + password + "\" " +
+                "date=" + "\"" + date + "\" " +
+                "checksum=\"" + checksum + "\" " +
                 "act=\"18\">\n" +
                 "</seller>\n" +
-                "<stock name=\"" +
-                product.getmStockName() + "\" " +
-                "code=\"stock_code\">     \n" +
-                "<product barcode=\"" +
-                product.getBarcode() +
-                "\" \n" +
-                "name=\"" +
-                product.getName() +
-                "\"\n" +
-                "size=\"M\"\n" +
-                "batch=\"2015Q1\"    \n" +
-                "season=\"Q1\"\n" +
-                "count=\"1\" />\n" +
+                "<stock name=\"" + product.getmStockName() + "\" " +
+                "code=\"" + product.getmStockCode() + "\">\n" +
+                "<product barcode=\"" + product.getBarcode() + "\" \n" +
+                "name=\"" + product.getName() + "\"\n" +
+                "size=\"" + product.getSize() + "\"\n" +
+                "batch=\"" + product.getBatch() + "\"\n" +
+                "season=\"" + product.getSeason() + "\"\n" +
+                "count=\"" + count + "\" />\n" +
                 "</stock>\n" +
                 "</magazin>\n";
 
+        NetworkHelper.postRequest(new NetworkHelper.RequestListener() {
+            @Override
+            public void OnRequestComplete(Object result) {
+
+            }
+
+            @Override
+            public void OnRequestError(Exception error) {
+
+            }
+        }, request);
     }
 
     private void setProductDetails(ArrayList<ProductDetails> products) {

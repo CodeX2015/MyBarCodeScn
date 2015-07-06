@@ -248,6 +248,7 @@ public class Utils {
                     for (ProductDetails item : stock.getProduct()) {
                         if (item.getBarcode() != null) {
                             item.setmStockName(stock.getName());
+                            item.setmStockCode(stock.getCode());
                             productDetails.add(item);
                         }
                     }
