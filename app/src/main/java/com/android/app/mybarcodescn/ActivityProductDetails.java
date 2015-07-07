@@ -49,6 +49,28 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
     ProdDet prodDet = new ProdDet();
     ArrayList<ProductDetails> products;
 
+    public String getmCardCode() {
+        if (mCardCode == null) {
+            return "";
+        }
+        return mCardCode;
+    }
+
+    public void setmCardCode(String mCardCode) {
+        this.mCardCode = mCardCode;
+    }
+
+    public String getmBarCode() {
+        if (mBarCode == null) {
+            return "";
+        }
+        return mBarCode;
+    }
+
+    public void setmBarCode(String mBarCode) {
+        this.mBarCode = mBarCode;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,13 +119,14 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
         });
 
         btnConsumerBasket.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-                Gson gson = new Gson();
-                String json = gson.toJson(products);
+                //Gson gson = new Gson();
+                //String json = gson.toJson(products);
 
                 Intent myIntent = new Intent(ActivityProductDetails.this, ActivityConsumerBasket.class);
-                myIntent.putExtra("ProductDetails", json);
+                //myIntent.putExtra("ProductDetails", json);
                 ActivityProductDetails.this.startActivityForResult(myIntent, 1);
             }
         });
@@ -143,28 +166,10 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
 
                 show("Chose count of " + ((ProductDetails) parent.getAdapter().getItem(position)).getName(), ((ProductDetails) parent.getAdapter().getItem(position)));
 
-                saveItem((ProductDetails) parent.getAdapter().getItem(position));
+
 
             }
         });
-    }
-
-
-    private void saveItem(ProductDetails product) {
-//        product.setAmountKppMt(Integer.parseInt(mAmountMT.getText().toString()));
-//        product.setAmountKppAt(Integer.parseInt(mAmountAT.getText().toString()));
-        Utils.saveItem(new Utils.SaveListener() {
-            @Override
-            public void OnSaveComplete(boolean result) {
-
-            }
-
-            @Override
-            public void OnSaveError(String error) {
-                Log.d("Save ERR", error);
-            }
-        }, ActivityProductDetails.this, product);
-        //Toast.makeText(ActivityCarDetails.this, "Save car in garage", Toast.LENGTH_LONG).show();
     }
 
     public void show(String title, final ProductDetails product) {
@@ -184,6 +189,8 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
             public void onClick(View v) {
                 //tv.setText(String.valueOf(np.getValue()));
                 Toast.makeText(ActivityProductDetails.this, String.valueOf(np.getValue()), Toast.LENGTH_LONG).show();
+                product.setmSelectedCount(np.getValue());
+                saveItem(product);
                 //sendToStorer(product, np.getValue());
                 d.dismiss();
             }
@@ -195,6 +202,26 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
             }
         });
         d.show();
+    }
+
+    private void saveItem(ProductDetails product) {
+        Utils.saveItem(new Utils.SaveListener() {
+            @Override
+            public void OnSaveComplete(boolean result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ActivityProductDetails.this, "Save product in basket", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            @Override
+            public void OnSaveError(String error) {
+                Log.d("Save ERR", error);
+            }
+        }, ActivityProductDetails.this, product);
+
     }
 
     @Override
@@ -351,7 +378,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
         }
     }
 
-    private void loadProductPhoto(ProductDetails productDetails) {
+    private void loadProductPhoto(final ProductDetails productDetails) {
         if (!productDetails.getImage().equalsIgnoreCase("") && productDetails.getImage() != null) {
             NetworkHelper.getImageFromUrl(new NetworkHelper.LoadListener() {
                 @Override
@@ -360,6 +387,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
                         @Override
                         public void run() {
                             prodDet.ivPhoto.setImageBitmap((Bitmap) result);
+                            productDetails.setProduct_photo((Bitmap) result);
                             prodDet.vfPhoto.setDisplayedChild(1);
                         }
                     });
@@ -377,28 +405,6 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
                 }
             }, productDetails.getImage());
         }
-    }
-
-    public String getmCardCode() {
-        if (mCardCode == null) {
-            return "";
-        }
-        return mCardCode;
-    }
-
-    public void setmCardCode(String mCardCode) {
-        this.mCardCode = mCardCode;
-    }
-
-    public String getmBarCode() {
-        if (mBarCode == null) {
-            return "";
-        }
-        return mBarCode;
-    }
-
-    public void setmBarCode(String mBarCode) {
-        this.mBarCode = mBarCode;
     }
 
     @Override
@@ -429,24 +435,6 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
                 "    <Product barcode=\"" +
                 barcode +
                 "\" />\n" +
-                "</Product>";
-
-        //query is your body
-        String query = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<Product>\n" +
-                " <seller login=\"__Said__\" stock=\"cash_lining\" date=\"2015-06-18 16:02:25\" checksum=\"f723d56ed587de28f869ebb73e817696188aa921\" act=\"4\">\n" +
-                "    </seller>\n" +
-                "    <discount \n" +
-                "  first_name=\"ТЕСТ\" \n" +
-                "  last_name=\"ТЕСТ\" \n" +
-                "        patronymic=\"ТЕСТ\"\n" +
-                "        phone=\"123456789\"\n" +
-                "        discount_code=\"987654321\"\n" +
-                "  email=\"someemail@mail.com\"\n" +
-                "  birthday=\"1980-01-01\"\n" +
-                "  wear_size=\"M\"\n" +
-                "  shoes_size=\"7\"\n" +
-                "  photo=\"фото клиента в формате hex\"/>\n" +
                 "</Product>";
 
         NetworkHelper.postRequest(new NetworkHelper.RequestListener() {

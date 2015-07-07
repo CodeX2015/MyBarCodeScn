@@ -22,6 +22,15 @@ public class ProductDetails implements Serializable {
     Bitmap product_photo;
     String mStockName;
     String mStockCode;
+    int mSelectedCount;
+
+    public int getmSelectedCount() {
+        return mSelectedCount;
+    }
+
+    public void setmSelectedCount(int mSelectedCount) {
+        mSelectedCount = mSelectedCount;
+    }
 
     public String getmStockCode() {
         return mStockCode;

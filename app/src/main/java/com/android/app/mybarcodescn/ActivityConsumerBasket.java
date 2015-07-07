@@ -8,7 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.Toast;
 
+import com.android.app.mybarcodescn.adapters.BasketAdapter;
 import com.android.app.mybarcodescn.adapters.StickyListHeaderAdapter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -26,12 +29,14 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 public class ActivityConsumerBasket extends AppCompatActivity {
     private ExpandableStickyListHeadersListView mListView;
     private ArrayList<ProductDetails> products;
-    StickyListHeaderAdapter mStickyListHeaderAdapter;
+    BasketAdapter mStickyListHeaderAdapter;
+    private Button btnSendToStorer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listview);
+        btnSendToStorer =(Button) findViewById(R.id.btnSendToStorer);
         mListView = (ExpandableStickyListHeadersListView) findViewById(R.id.lvList);
         mListView.setOnHeaderClickListener(new StickyListHeadersListView.OnHeaderClickListener() {
             @Override
@@ -41,6 +46,13 @@ public class ActivityConsumerBasket extends AppCompatActivity {
                 } else {
                     //mListView.collapse(headerId);
                 }
+            }
+        });
+
+        btnSendToStorer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ActivityConsumerBasket.this, "Request send..", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -72,14 +84,14 @@ public class ActivityConsumerBasket extends AppCompatActivity {
 
             @Override
             public void OnLoadError(final String error) {
-                Log.d("FGLG_loadData ERR", error);
+                Log.d("BASKET_loadData ERR", error);
             }
         }, this);
     }
 
     private void setAdapter() {
         mListView.setAnimExecutor(new AnimationExecutor());
-        mStickyListHeaderAdapter = new StickyListHeaderAdapter(this, products);
+        mStickyListHeaderAdapter = new BasketAdapter(this, products);
         mListView.setAdapter(mStickyListHeaderAdapter);
     }
 

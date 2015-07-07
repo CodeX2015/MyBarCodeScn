@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
 
@@ -48,6 +49,7 @@ public class Utils {
     private static SharedPreferences mPrefs = null;
     private static ExecutorService mExecService = Executors.newCachedThreadPool();
     private static ArrayList<ProductDetails> mProductsDBPrefs;
+    final static String PREF_TAG = "Products";
 
     public static int getHeaderHeight() {
         return mHeaderHeight;
@@ -66,11 +68,19 @@ public class Utils {
     }
 
     public Utils(Context context) {
-        SharedPreferences mPrefs = context.getSharedPreferences("Products", 0);
+        SharedPreferences mPrefs = context.getSharedPreferences(PREF_TAG, 0);
+    }
+
+    public static ArrayList<ProductDetails> getProductsDBPrefs() {
+        return mProductsDBPrefs;
+    }
+
+    public static void setProductsDBPrefs(ArrayList<ProductDetails> mProductsDBPrefs) {
+        Utils.mProductsDBPrefs = mProductsDBPrefs;
     }
 
     public static void loadData(final LoadListener listener, final Context context) {
-        mPrefs = context.getSharedPreferences("Products", 0);
+        mPrefs = context.getSharedPreferences(PREF_TAG, 0);
         mExecService.submit(new Runnable() {
             @Override
             public void run() {
@@ -85,7 +95,7 @@ public class Utils {
     }
 
     public static void saveItem(final SaveListener listener, Context context, final ProductDetails product) {
-        mPrefs = context.getSharedPreferences("Cars", 0);
+        mPrefs = context.getSharedPreferences(PREF_TAG, 0);
         mExecService.submit(new Runnable() {
             @Override
             public void run() {
@@ -98,13 +108,8 @@ public class Utils {
             }
         });
     }
-    public static ArrayList<ProductDetails> getProductsDBPrefs() {
-        return mProductsDBPrefs;
-    }
 
-    public static void setProductsDBPrefs(ArrayList<ProductDetails> mProductsDBPrefs) {
-        Utils.mProductsDBPrefs = mProductsDBPrefs;
-    }
+
 
     private static void savePref(ProductDetails product) {
         loadPref();
@@ -112,7 +117,7 @@ public class Utils {
         if (products != null) {
             ArrayList<ProductDetails> productsId = new ArrayList<ProductDetails>();
             for (int i = 0; i < products.size(); i++) {
-                    productsId.add(products.get(i));
+                productsId.add(products.get(i));
             }
             productsId.add(product);
             products.clear();
@@ -133,7 +138,7 @@ public class Utils {
         if (products != null) {
             Gson gson = new Gson();
             String json = gson.toJson(products);
-            prefsEditor.putString("Products", json);
+            prefsEditor.putString(PREF_TAG, json);
         }
         prefsEditor.apply();
         loadPref();
@@ -144,23 +149,10 @@ public class Utils {
             return;
         }
         Gson gson = new Gson();
-        String json = mPrefs.getString("Products", null);
+        String json = mPrefs.getString(PREF_TAG, null);
         setProductsDBPrefs((ArrayList<ProductDetails>) gson.fromJson(
                 json, new TypeToken<ArrayList<ProductDetails>>() {
                 }.getType()));
-    }
-
-    public interface LoadListener {
-        void OnLoadComplete(Object result);
-        void OnLoadError(String error);
-    }
-    public interface SaveListener {
-        void OnSaveComplete(boolean result);
-        void OnSaveError(String error);
-    }
-    public interface DeleteListener {
-        void OnDeleteComplete(boolean result);
-        void OnDeleteError(String error);
     }
 
     public static void EmptyMessage(Context context) {
@@ -176,26 +168,6 @@ public class Utils {
                         });
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    public static void getData() {
-        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<magazin>\n" +
-                " <seller login=\"__Said__\" stock=\"cash_lining\" date=\"2015-06-18 16:02:25\" checksum=\"f723d56ed587de28f869ebb73e817696188aa921\" act=\"4\">\n" +
-                "    </seller>\n" +
-                "    <discount \n" +
-                "  first_name=\"ТЕСТ\" \n" +
-                "  last_name=\"ТЕСТ\" \n" +
-                "        patronymic=\"ТЕСТ\"\n" +
-                "        phone=\"123456789\"\n" +
-                "        discount_code=\"987654321\"\n" +
-                "  email=\"someemail@mail.com\"\n" +
-                "  birthday=\"1980-01-01\"\n" +
-                "  wear_size=\"M\"\n" +
-                "  shoes_size=\"7\"\n" +
-                "  photo=\"фото клиента в формате hex\"/> \n" +
-                "</Product>";
-        convertXmltoJSON(xml);
     }
 
     public static JSONObject convertXmltoJSON(String xml) {
@@ -327,7 +299,6 @@ public class Utils {
         listView.requestLayout();
     }
 
-
     public static void setMyList(Context context, ExpandableStickyListHeadersListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)
@@ -356,7 +327,7 @@ public class Utils {
     public static float convertDp2Px(Context context) {
         Resources r = context.getResources();
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, r.getDimension(R.dimen.activity_list_header), r.getDisplayMetrics());
-        return  px;
+        return px;
     }
 
     public static ArrayList<ProductDetails> convertArrayList(ArrayList<Stock> stocks) {
@@ -393,12 +364,27 @@ public class Utils {
     public static String bytesToHex(byte[] bytes) {
         final char[] hexArray = "0123456789ABCDEF".toCharArray();
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public interface LoadListener {
+        void OnLoadComplete(Object result);
+        void OnLoadError(String error);
+    }
+
+    public interface SaveListener {
+        void OnSaveComplete(boolean result);
+        void OnSaveError(String error);
+    }
+
+    public interface DeleteListener {
+        void OnDeleteComplete(boolean result);
+        void OnDeleteError(String error);
     }
 
 }
