@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -100,6 +101,7 @@ public class Utils {
             @Override
             public void run() {
                 try {
+                    //mPrefs.edit().clear().apply();
                     savePref(product);
                     listener.OnSaveComplete(true);
                 } catch (Exception e) {
@@ -108,8 +110,6 @@ public class Utils {
             }
         });
     }
-
-
 
     private static void savePref(ProductDetails product) {
         loadPref();
@@ -371,6 +371,27 @@ public class Utils {
         }
         return new String(hexChars);
     }
+
+    public static String getStringFromBitmap(Bitmap bitmapPicture) {
+        /*
+        * This functions converts Bitmap picture to a string which can be
+        * JSONified.
+        * */
+        final int COMPRESSION_QUALITY = 100;
+        ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+        bitmapPicture.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, byteArrayBitmapStream);
+        byte[] b = byteArrayBitmapStream.toByteArray();
+        return Base64.encodeToString(b, Base64.DEFAULT);
+    }
+
+    public static Bitmap getBitmapFromString(String jsonString) {
+        /*
+        * This Function converts the String back to Bitmap
+        * */
+        byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
 
     public interface LoadListener {
         void OnLoadComplete(Object result);

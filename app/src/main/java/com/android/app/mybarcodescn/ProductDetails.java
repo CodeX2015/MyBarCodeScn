@@ -19,7 +19,7 @@ public class ProductDetails implements Serializable {
     double total_price;
     double size;
     int discount_percent;
-    Bitmap product_photo;
+    String product_photo;
     String mStockName;
     String mStockCode;
     int mSelectedCount;
@@ -29,7 +29,7 @@ public class ProductDetails implements Serializable {
     }
 
     public void setmSelectedCount(int mSelectedCount) {
-        mSelectedCount = mSelectedCount;
+        this.mSelectedCount = mSelectedCount;
     }
 
     public String getmStockCode() {
@@ -49,12 +49,17 @@ public class ProductDetails implements Serializable {
     }
 
     public Bitmap getProduct_photo() {
-        return product_photo;
+        if (product_photo != null) {
+            return Utils.getBitmapFromString(product_photo);
+        }
+        return null;
     }
 
     public void setProduct_photo(Bitmap product_photo) {
-        this.product_photo = product_photo;
+        this.product_photo = Utils.getStringFromBitmap(product_photo);
     }
+
+
 
     public double getCount() {
         return count;
