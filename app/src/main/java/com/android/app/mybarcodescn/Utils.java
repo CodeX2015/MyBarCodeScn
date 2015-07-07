@@ -1,15 +1,17 @@
 package com.android.app.mybarcodescn;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
-import android.widget.ViewFlipper;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -29,7 +31,8 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
 
@@ -42,6 +45,9 @@ public class Utils {
     private static Gson mGson = new Gson();
     private static int mHeadersCount;
     private static int mHeaderHeight;
+    private static SharedPreferences mPrefs = null;
+    private static ExecutorService mExecService = Executors.newCachedThreadPool();
+    private static ArrayList<ProductDetails> mProductsDBPrefs;
 
     public static int getHeaderHeight() {
         return mHeaderHeight;
@@ -57,6 +63,119 @@ public class Utils {
 
     public static void setmHeadersCount(int count) {
         mHeadersCount = count;
+    }
+
+    public Utils(Context context) {
+        SharedPreferences mPrefs = context.getSharedPreferences("Products", 0);
+    }
+
+    public static void loadData(final LoadListener listener, final Context context) {
+        mPrefs = context.getSharedPreferences("Products", 0);
+        mExecService.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    loadPref();
+                    listener.OnLoadComplete(getProductsDBPrefs());
+                } catch (Exception e) {
+                    listener.OnLoadError(e.getMessage());
+                }
+            }
+        });
+    }
+
+    public static void saveItem(final SaveListener listener, Context context, final ProductDetails product) {
+        mPrefs = context.getSharedPreferences("Cars", 0);
+        mExecService.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    savePref(product);
+                    listener.OnSaveComplete(true);
+                } catch (Exception e) {
+                    listener.OnSaveError(e.getMessage());
+                }
+            }
+        });
+    }
+    public static ArrayList<ProductDetails> getProductsDBPrefs() {
+        return mProductsDBPrefs;
+    }
+
+    public static void setProductsDBPrefs(ArrayList<ProductDetails> mProductsDBPrefs) {
+        Utils.mProductsDBPrefs = mProductsDBPrefs;
+    }
+
+    private static void savePref(ProductDetails product) {
+        loadPref();
+        ArrayList<ProductDetails> products = getProductsDBPrefs();
+        if (products != null) {
+            ArrayList<ProductDetails> productsId = new ArrayList<ProductDetails>();
+            for (int i = 0; i < products.size(); i++) {
+                    productsId.add(products.get(i));
+            }
+            productsId.add(product);
+            products.clear();
+            products.addAll(productsId);
+        } else {
+            products = new ArrayList<ProductDetails>();
+            products.add(product);
+        }
+        savePrefFull(products);
+    }
+
+    private static void savePrefFull(ArrayList<ProductDetails> products) {
+        if (mPrefs == null) {
+            return;
+        }
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        prefsEditor.clear();
+        if (products != null) {
+            Gson gson = new Gson();
+            String json = gson.toJson(products);
+            prefsEditor.putString("Products", json);
+        }
+        prefsEditor.apply();
+        loadPref();
+    }
+
+    private static void loadPref() {
+        if (mPrefs == null) {
+            return;
+        }
+        Gson gson = new Gson();
+        String json = mPrefs.getString("Products", null);
+        setProductsDBPrefs((ArrayList<ProductDetails>) gson.fromJson(
+                json, new TypeToken<ArrayList<ProductDetails>>() {
+                }.getType()));
+    }
+
+    public interface LoadListener {
+        void OnLoadComplete(Object result);
+        void OnLoadError(String error);
+    }
+    public interface SaveListener {
+        void OnSaveComplete(boolean result);
+        void OnSaveError(String error);
+    }
+    public interface DeleteListener {
+        void OnDeleteComplete(boolean result);
+        void OnDeleteError(String error);
+    }
+
+    public static void EmptyMessage(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Информация:")
+                .setMessage("В корзине нет товаров.")
+                .setCancelable(false)
+                .setNegativeButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public static void getData() {

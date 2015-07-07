@@ -25,6 +25,15 @@
             android:layout_margin="4dp"
             android:padding="10dp"
             android:text="Scan CARD" />
+
+        <Button
+            android:id="@+id/btnConsumerBasket"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="10dp"
+            android:text="Add basket" />
+
     </LinearLayout>
 
     <LinearLayout

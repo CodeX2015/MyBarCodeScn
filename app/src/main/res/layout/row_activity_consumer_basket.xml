@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:padding="10dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
+
+    <ImageView
+        android:id="@+id/ivProdPic"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="6dp"
+        android:contentDescription="ProductPhoto" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/ivProdPic"
+        android:paddingLeft="5dp"
+        android:text="ProductName"
+        android:textColor="@color/main_text_color"
+        android:textSize="@dimen/header_text_size" />
+
+    <TextView
+        android:id="@+id/tvSizeHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/ivProdPic"
+        android:paddingLeft="5dp"
+        android:text="Size: "
+        android:textColor="@color/main_text_color"
+        android:textSize="@dimen/main_text_size" />
+
+    <TextView
+        android:id="@+id/tvSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/tvSizeHeader"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="8"
+        android:textColor="@color/main_text_color"
+        android:textSize="@dimen/main_text_size" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="10"
+        android:textColor="@color/main_text_color"
+        android:textSize="@dimen/header_text_size"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>

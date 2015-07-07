@@ -19,6 +19,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.android.app.mybarcodescn.adapters.StickyListHeaderAdapter;
+import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -42,11 +43,11 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
     private Button btnScanCard;
     private Button btnAddCard;
     private Button btnDetails;
+    private Button btnConsumerBasket;
     private String mCardCode = "000000000000";
     private String mBarCode = "6913657077940";
-
-
     ProdDet prodDet = new ProdDet();
+    ArrayList<ProductDetails> products;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
         btnScanCard = (Button) findViewById(R.id.btnScanCard);
         btnAddCard = (Button) findViewById(R.id.btnAddCard);
         btnDetails = (Button) findViewById(R.id.btnDetails);
+        btnConsumerBasket = (Button) findViewById(R.id.btnConsumerBasket);
 
         btnAddCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +97,19 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
             }
         });
 
+        btnConsumerBasket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Gson gson = new Gson();
+                String json = gson.toJson(products);
+
+                Intent myIntent = new Intent(ActivityProductDetails.this, ActivityConsumerBasket.class);
+                myIntent.putExtra("ProductDetails", json);
+                ActivityProductDetails.this.startActivityForResult(myIntent, 1);
+            }
+        });
+
+
         prodDet.llMain = (LinearLayout) findViewById(R.id.llMain);
         prodDet.tvName = (TextView) findViewById(R.id.tvName);
         prodDet.tvSeason = (TextView) findViewById(R.id.tvSeason);
@@ -128,8 +143,29 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
                 Toast.makeText(ActivityProductDetails.this, sendStock, Toast.LENGTH_LONG).show();
 
                 show("Chose count of " + ((ProductDetails) parent.getAdapter().getItem(position)).getName(), ((ProductDetails) parent.getAdapter().getItem(position)));
+
+                saveItem((ProductDetails) parent.getAdapter().getItem(position));
+
             }
         });
+    }
+
+
+    private void saveItem(ProductDetails product) {
+//        product.setAmountKppMt(Integer.parseInt(mAmountMT.getText().toString()));
+//        product.setAmountKppAt(Integer.parseInt(mAmountAT.getText().toString()));
+        Utils.saveItem(new Utils.SaveListener() {
+            @Override
+            public void OnSaveComplete(boolean result) {
+
+            }
+
+            @Override
+            public void OnSaveError(String error) {
+                Log.d("Save ERR", error);
+            }
+        }, ActivityProductDetails.this, product);
+        //Toast.makeText(ActivityCarDetails.this, "Save car in garage", Toast.LENGTH_LONG).show();
     }
 
     public void show(String title, final ProductDetails product) {
@@ -214,7 +250,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
                 //Utils.deserializeXML((String) result);
                 final Product product = Utils.convertJSONtoProduct(Utils.convertXmltoJSON((String) result));
                 final ArrayList<Stock> stocks = product.getStock();
-                final ArrayList<ProductDetails> products = Utils.convertArrayList(product.getStock());
+                products = Utils.convertArrayList(product.getStock());
                 Log.d("OneQComplete", String.valueOf(products.size()));
                 runOnUiThread(new Runnable() {
                     @Override
