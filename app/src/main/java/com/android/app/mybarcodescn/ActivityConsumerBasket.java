@@ -52,7 +52,7 @@ public class ActivityConsumerBasket extends AppCompatActivity {
         btnSendToStorer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ActivityConsumerBasket.this, "Request send..", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityConsumerBasket.this, "обломись :Р", Toast.LENGTH_SHORT).show();
             }
         });
 
