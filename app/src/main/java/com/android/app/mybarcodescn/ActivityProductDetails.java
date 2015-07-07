@@ -55,7 +55,6 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
 
         setContentView(R.layout.activity_product_details);
 
-
         btnScanProduct = (Button) findViewById(R.id.btnScanProduct);
         btnScanCard = (Button) findViewById(R.id.btnScanCard);
         btnAddCard = (Button) findViewById(R.id.btnAddCard);
@@ -185,7 +184,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
             public void onClick(View v) {
                 //tv.setText(String.valueOf(np.getValue()));
                 Toast.makeText(ActivityProductDetails.this, String.valueOf(np.getValue()), Toast.LENGTH_LONG).show();
-                sendToStorer(product, np.getValue());
+                //sendToStorer(product, np.getValue());
                 d.dismiss();
             }
         });
