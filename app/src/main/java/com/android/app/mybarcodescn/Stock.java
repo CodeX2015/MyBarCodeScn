@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by Yakovlev on 25.06.2015.
+ * Created by CodeX on 25.06.2015.
  */
 public class Stock implements Serializable{
     String name;

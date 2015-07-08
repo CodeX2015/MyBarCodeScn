@@ -3,15 +3,13 @@ package com.android.app.mybarcodescn;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 /**
- * Created by huligun on 03.07.2015.
+ * Created by CodeX on 03.07.2015.
  */
 
 public class ActivityCardScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {

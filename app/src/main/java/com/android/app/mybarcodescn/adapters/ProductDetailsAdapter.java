@@ -9,18 +9,14 @@ import android.widget.BaseAdapter;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import com.android.app.mybarcodescn.Product;
 import com.android.app.mybarcodescn.ProductDetails;
 import com.android.app.mybarcodescn.R;
-import com.android.app.mybarcodescn.Stock;
 import com.android.app.mybarcodescn.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Set;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 

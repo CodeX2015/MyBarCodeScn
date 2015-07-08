@@ -171,7 +171,7 @@ public class ActivityVipCard extends AppCompatActivity {
                 "\"\n" + "wear_size=\"" +
                 etWear.getText().toString() +
                 "\"\n" + "shoes_size=\"" +
-                //etShoes.getText().toString() +
+                etShoes.getText().toString() +
                 "\"\n" + "photo=\"" +
                 Utils.bytesToHex(
                         Utils.getBytes(

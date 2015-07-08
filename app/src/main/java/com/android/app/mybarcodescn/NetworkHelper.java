@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,7 +30,6 @@ public class NetworkHelper {
     private static Gson mGson = new Gson();
 
     public static void getProductsDetailsByCode (){}
-
 
     public static void getImageFromUrl(final LoadListener listener, final String image) {
         mExecService.execute(new Runnable() {
