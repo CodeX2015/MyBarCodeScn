@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,15 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.android.app.mybarcodescn.adapters.StickyListHeaderAdapter;
-import com.google.gson.Gson;
+import com.android.app.mybarcodescn.adapters.ProductDetailsAdapter;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
@@ -180,7 +174,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
         Button b1 = (Button) d.findViewById(R.id.button1);
         Button b2 = (Button) d.findViewById(R.id.button2);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
-        np.setMaxValue(1000);
+        np.setMaxValue((int) product.getCount());
         np.setMinValue(1);
         np.setWrapSelectorWheel(false);
         np.setOnValueChangedListener(ActivityProductDetails.this);
@@ -360,6 +354,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
                     if (product.getImage() != null && !product.getImage().equalsIgnoreCase("")) {
                         loadProductPhoto(product);
                         mPhotoFlag = true;
+                        prodDet.vfPhoto.setVisibility(View.VISIBLE);
                         break;
                     }
                 }
@@ -371,7 +366,7 @@ public class ActivityProductDetails extends AppCompatActivity implements NumberP
                 prodDet.vfPhoto.setDisplayedChild(1);
             }
             prodDet.llMain.setVisibility(View.VISIBLE);
-            prodDet.mListView.setAdapter(new StickyListHeaderAdapter(this, products));
+            prodDet.mListView.setAdapter(new ProductDetailsAdapter(this, products));
 
             //Todo http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
             Utils.setMyList(this, prodDet.mListView);

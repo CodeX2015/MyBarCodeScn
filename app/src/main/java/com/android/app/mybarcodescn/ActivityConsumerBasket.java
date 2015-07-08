@@ -12,9 +12,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.app.mybarcodescn.adapters.BasketAdapter;
-import com.android.app.mybarcodescn.adapters.StickyListHeaderAdapter;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.WeakHashMap;

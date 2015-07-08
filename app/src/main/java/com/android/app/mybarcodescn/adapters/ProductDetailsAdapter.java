@@ -29,7 +29,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
  * Created by CodeX on 02.07.2015.
  */
 
-public class StickyListHeaderAdapter extends BaseAdapter implements
+public class ProductDetailsAdapter extends BaseAdapter implements
         StickyListHeadersAdapter, SectionIndexer {
     private final ArrayList<ProductDetails> mProducts;
     private int[] mSectionIndices;
@@ -37,7 +37,7 @@ public class StickyListHeaderAdapter extends BaseAdapter implements
     private LayoutInflater mInflater;
     LinkedHashMap<String, String> mSections;
 
-    public StickyListHeaderAdapter(Context context, ArrayList<ProductDetails> products) {
+    public ProductDetailsAdapter(Context context, ArrayList<ProductDetails> products) {
         mInflater = LayoutInflater.from(context);
         mProducts = products;
         ProductComparator productComparator = new ProductComparator();
